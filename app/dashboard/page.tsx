@@ -23,28 +23,47 @@ const Dashboard = () => {
 
   const [cowrie, setCowrie] = useState([]);
   const [dionaea, setDionaea] = useState([]);
+  const [top, setTop] = useState([]);
+  const [country, setCountry] = useState<{
+    country: string;
+  } | null>(null);
+
 
   useEffect(() => {
     fetchPosts();
+    fetchCountry();
   }, []);
 
   const fetchPosts = async () => {
     try {
       const cowrie = await axios.get("/api/honeypots/cowrie");
       const dionaea = await axios.get("/api/honeypots/dionaea");
-      console.log(cowrie)
-      console.log(dionaea)
+      const top = await axios.get("/api/honeypots/protocols/top");
+      console.log(top)
       setCowrie(cowrie.data);
       setDionaea(dionaea.data);
+      setTop(top.data);
     } catch (error) {
       console.error(error);
     }
   };
 
+  const fetchCountry = async () => {
+    try{
+      const country = await axios.get("http://ip-api.com/json/24.48.0.1");
+      setCountry(country.data);
+      console.log(country);
+    }
+    catch(error){
+      console.error(error);
+    }
+  }
+
   return (
     <ThemeProvider theme={darkTheme}>
       <div className="px-24 py-12">
         <Box>
+          {/* <div>{country?.country}</div> */}
           <Grid container gap={2} marginTop={0}>
             <Grid container gap={5} className={scss.dataRibbon}>
               <Grid>
@@ -64,7 +83,7 @@ const Dashboard = () => {
             </Grid>
 
             <Grid container className={scss.forChart}>
-              <HorizontalBar />
+              <HorizontalBar top={top}/>
               <LineChart />
               <BarChart
                 cowrie_atk={cowrie.length}

@@ -5,7 +5,6 @@ import axios from "axios";
 import Link from "next/link";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import BarChart from "@/app/components/chart/barChart/BarChart"
-import DataRibbon from "./components/chart/dataRibbon/DataRibbon";
 
 const darkTheme = createTheme({
   palette: {

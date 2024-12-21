@@ -43,3 +43,9 @@ model Honeypot {
   username    String
   password    String
 }
+
+model Protocol {
+  id      Int      @id @default(autoincrement())
+  name    String
+  count   Int
+}

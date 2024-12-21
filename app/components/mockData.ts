@@ -25,35 +25,9 @@ export const barChartData = {
       backgroundColor: ["lightgreen", "#8062D6"],
       tension: 0.1,
     },
-    // {
-    //   label: "DEF",
-    //   data: [5025, 849],
-    //   fill: false,
-    //   backgroundColor: ["rgb(255,137,168)", "rgb(178,3,106)"],
-    //   tension: 0.1,
-    // },
   ],
 };
 
-export const horizontalChartData = {
-  labels: ['ftp','Blackhole','mirrord','mirrorc', 'pptpd'],
-  datasets: [
-    {
-      label: "Protocol",
-      data: [1600, 1580, 1320, 987, 543],
-      fill: false,
-      backgroundColor: ["#b18a56", "#b04859", "#9847b4", "#4c72b8", "#6cbc64"],
-      tension: 0.1,
-    },
-    // {
-    //   label: "DEF",
-    //   data: [5025, 849],
-    //   fill: false,
-    //   backgroundColor: ["rgb(255,137,168)", "rgb(178,3,106)"],
-    //   tension: 0.1,
-    // },
-  ],
-};
 
 export const optionsHorizontal = {
   responsive: true,
