@@ -19,3 +19,15 @@ model Post {
   content   String?
   createdAt DateTime @default(now())
 }
+
+model Cowrie {
+  id        Int      @id @default(autoincrement())
+  attacks   Int
+  createdAt DateTime @default(now())
+}
+
+model Dionaea {
+  id        Int      @id @default(autoincrement())
+  attacks   Int
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,27 @@
+$breakPoint: 1000px;
+
+.wrapper {
+    display: flex;
+    max-height: fit-content;
+}
+
+.transactions {
+    display: block;
+    justify-content: center;
+    padding: 1rem 2rem;
+    width: 100%;
+    
+
+    @media screen and (min-width: $breakPoint) {
+        display: flex;
+    }
+}
+
+.chart {
+    max-width: 100%;
+    width: 100%;
+
+    @media screen and (min-width: $breakPoint) {
+        max-width: 100%;
+    }
+}
