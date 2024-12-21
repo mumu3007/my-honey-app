@@ -19,7 +19,6 @@ const darkTheme = createTheme({
 });
 
 const Dashboard = () => {
-  
   const router = useRouter();
 
   const [cowrie, setCowrie] = useState([]);
@@ -31,9 +30,10 @@ const Dashboard = () => {
 
   const fetchPosts = async () => {
     try {
-      const cowrie = await axios.get("/api/cowrie");
-      const dionaea = await axios.get("/api/dionaea");
-      console.log(cowrie);
+      const cowrie = await axios.get("/api/honeypots/cowrie");
+      const dionaea = await axios.get("/api/honeypots/dionaea");
+      console.log(cowrie)
+      console.log(dionaea)
       setCowrie(cowrie.data);
       setDionaea(dionaea.data);
     } catch (error) {
@@ -48,47 +48,46 @@ const Dashboard = () => {
           <Grid container gap={2} marginTop={0}>
             <Grid container gap={5} className={scss.dataRibbon}>
               <Grid>
-                {cowrie.map((cowrie: any) => (
-                  <DataCard
-                    key={cowrie.id}
-                    title={"Cowrie-Attacks"}
-                    value={cowrie.attacks}
-                    description={"Number of Cowrie attack"}
-                  />
-                ))}
-                </Grid>
-                <Grid>
-                {dionaea.map((dionaea: any) => (
-                  <DataCard
-                    key={dionaea.id}
-                    title={"Dionaea-Attacks"}
-                    value={dionaea.attacks}
-                    description={"Number of Dionaea attack"}
-                  />
-                ))}
+                <DataCard
+                  title={"Cowrie-Attacks"}
+                  value={cowrie.length}
+                  description={"Number of Cowrie attack"}
+                />
+              </Grid>
+              <Grid>
+                <DataCard
+                  title={"Dionaea-Attacks"}
+                  value={dionaea.length}
+                  description={"Number of Dionaea attack"}
+                />
               </Grid>
             </Grid>
 
             <Grid container className={scss.forChart}>
               <HorizontalBar />
               <LineChart />
-              <BarChart />
+              <BarChart
+                cowrie_atk={cowrie.length}
+                dionaea_atk={dionaea.length}
+              />
             </Grid>
 
             <Doughnut />
 
-            {/* <Grid container className={scss.forChart2}>
-          <Grid item xs={12}></Grid>
-          <Grid item xs={12}>
-            <BarChart />
-          </Grid>
-          <Grid item xs={12}>
-            <BarChart />
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid>
-        <Data /> */}
+            <Grid container className={scss.forChart2}>
+              <Grid item xs={12}>
+                <BarChart
+                  cowrie_atk={cowrie.length}
+                  dionaea_atk={dionaea.length}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <BarChart
+                  cowrie_atk={cowrie.length}
+                  dionaea_atk={dionaea.length}
+                />
+              </Grid>
+            </Grid>
           </Grid>
           {/* <Grid container gap={2} className={scss.topCardsContainer}>
                     <Grid>

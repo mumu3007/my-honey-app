@@ -20,14 +20,26 @@ model Post {
   createdAt DateTime @default(now())
 }
 
-model Cowrie {
-  id        Int      @id @default(autoincrement())
-  attacks   Int
-  createdAt DateTime @default(now())
-}
+// model Cowrie {
+//   id        Int      @id @default(autoincrement())
+//   attacks   Int
+//   createdAt DateTime @default(now())
+// }
 
-model Dionaea {
-  id        Int      @id @default(autoincrement())
-  attacks   Int
-  createdAt DateTime @default(now())
+// model Dionaea {
+//   id        Int      @id @default(autoincrement())
+//   attacks   Int
+//   createdAt DateTime @default(now())
+// }
+
+model Honeypot {
+  id           Int      @id @default(autoincrement())
+  name        String
+  alert       String
+  createdAt   DateTime  @default(now())
+  ip_attacker String
+  protocol    String
+  comment     String
+  username    String
+  password    String
 }
