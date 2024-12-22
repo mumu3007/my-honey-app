@@ -20,44 +20,76 @@ const darkTheme = createTheme({
 
 const Dashboard = () => {
   const router = useRouter();
-
+  const [honeypot, setHoneypot] = useState<any>([]);
   const [cowrie, setCowrie] = useState([]);
   const [dionaea, setDionaea] = useState([]);
   const [top, setTop] = useState([]);
-  const [country, setCountry] = useState<{
-    country: string;
-  } | null>(null);
-
+  const [country, setCountry] = useState<any[]>([]);
 
   useEffect(() => {
-    fetchPosts();
-    fetchCountry();
+     const fetchData = async () => {
+       await fetchPosts(); // รอให้ fetchPosts เสร็จ
+      //  fetchCountry(); // จากนั้นค่อยทำ fetchCountry
+     };
+
+     fetchData();
+     
   }, []);
 
   const fetchPosts = async () => {
     try {
+      const honeypot = await axios.get("/api/honeypots");
       const cowrie = await axios.get("/api/honeypots/cowrie");
       const dionaea = await axios.get("/api/honeypots/dionaea");
       const top = await axios.get("/api/honeypots/protocols/top");
-      console.log(top)
+      
+      setHoneypot(honeypot.data);
       setCowrie(cowrie.data);
       setDionaea(dionaea.data);
       setTop(top.data);
+      console.log(honeypot);
+      
+
+      const uniqueCountries: string[] = []; // อาเรย์สำหรับเก็บประเทศที่ไม่ซ้ำกัน
+
+      const countryResults = await Promise.all(
+        honeypot.data.map(async (i: any) => {
+          const ip = i.ip_attacker;
+          if (ip) {
+            const countryResponse = await axios.get(
+              `http://ip-api.com/json/${ip}`
+            );
+            const country = countryResponse.data.country;
+
+            // ตรวจสอบว่าประเทศนี้มีอยู่ในอาเรย์หรือยัง
+            if (!uniqueCountries.includes(country)) {
+              uniqueCountries.push(country); // ถ้ายังไม่มี ให้เพิ่มเข้าไป
+            }
+            return country;
+          } else {
+            console.warn(`No IP address found for honeypot item:`, i);
+            return null; // ถ้าไม่มี IP ให้คืนค่า null
+          }
+        })
+      );
+
+      setCountry(uniqueCountries); // เซ็ตประเทศที่ไม่ซ้ำกันใน state
+      console.log("Unique Country Array:", uniqueCountries);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const fetchCountry = async () => {
-    try{
-      const country = await axios.get("http://ip-api.com/json/24.48.0.1");
-      setCountry(country.data);
-      console.log(country);
-    }
-    catch(error){
-      console.error(error);
-    }
-  }
+  // const fetchCountry = async () => {
+  //   try {
+  //     console.log(honeypot)
+  //     // เรียกใช้ข้อมูล country สำหรับแต่ละ honeypot โดยใช้ ip_attacker
+  //     // const country = await axios.get(`http://ip-api.com/json/$`);
+  //     // return country.data; // คืนค่าผลลัพธ์จากแต่ละ ip
+  //   } catch (error) {
+  //     console.error("Error fetching country data:", error);
+  //   }
+  // };
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -83,15 +115,19 @@ const Dashboard = () => {
             </Grid>
 
             <Grid container className={scss.forChart}>
-              <HorizontalBar top={top}/>
-              <LineChart />
+              <HorizontalBar top={top} />
+              <LineChart
+                honeypot={honeypot}
+                cowrie={cowrie}
+                dionaea={dionaea}
+              />
               <BarChart
                 cowrie_atk={cowrie.length}
                 dionaea_atk={dionaea.length}
               />
             </Grid>
 
-            <Doughnut />
+            <Doughnut cowrie_atk={cowrie.length} dionaea_atk={dionaea.length} country={country} honeypot={honeypot}/>
 
             <Grid container className={scss.forChart2}>
               <Grid item xs={12}>

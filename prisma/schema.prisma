@@ -49,3 +49,9 @@ model Protocol {
   name    String
   count   Int
 }
+
+model Country {
+  id      Int      @id @default(autoincrement())
+  name    String
+  count   Int
+}

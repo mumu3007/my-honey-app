@@ -15,7 +15,55 @@ import {
 } from "@/app/components/mockData";
 import scss from "./Doughnut.module.scss";
 
-export default function Doughnut() {
+export type DoughnutProps = {
+  cowrie_atk: number;
+  dionaea_atk: number;
+  country: string[];
+  honeypot: any[];
+};
+
+export default function Doughnut(props: DoughnutProps) {
+
+  const { cowrie_atk, dionaea_atk, country, honeypot } = props;
+
+  const doughnutChartData1 = {
+    labels: ["Cowrie", "Dioneae"],
+    datasets: [
+      {
+        label: "Attacks",
+        data: [cowrie_atk, dionaea_atk],
+        backgroundColor: ["#55ad59", "#3f6296"],
+        borderWidth: 1,
+        hoverOffset: 4,
+      },
+    ],
+  };
+
+  const doughnutChartData2 = {
+    labels: country,
+    datasets: [
+      {
+        label: "Attacks",
+        data: [
+          honeypot.filter((i) => i.ip_attacker == "25.48.0.1").length,
+          honeypot.filter((i) => i.ip_attacker == "24.48.0.1").length,
+          honeypot.filter((i) => i.ip_attacker == "26.48.0.1").length,
+          honeypot.filter((i) => i.ip_attacker == "27.48.0.1").length,
+          honeypot.filter((i) => i.ip_attacker == "49.48.0.1").length,
+        ],
+        backgroundColor: [
+          "#b18a56",
+          "#4c72b8",
+          "#b04859",
+          "#6cbc64",
+          "#9847b4",
+        ],
+        borderWidth: 1,
+        hoverOffset: 4,
+      },
+    ],
+  };
+
   return (
     <Grid container className={scss.bottomRow}>
       <Grid>

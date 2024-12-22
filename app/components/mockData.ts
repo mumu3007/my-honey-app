@@ -2,33 +2,6 @@ import { months } from "@/app/helper/Util";
 import { honeypots } from "@/app/helper/Util";
 import { BorderClear, BorderColor } from "@mui/icons-material";
 
-export const lineChartData = {
-  labels: months({ count: 12 }),
-  datasets: [
-    {
-      label: "Attacks",
-      data: [65, 59, 80, 81, 56, 55, 60, 49, 112, 72, 52, 43],
-      fill: false,
-      borderColor: "lightblue",
-      tension: 0.1,
-    },
-  ],
-};
-
-export const barChartData = {
-  labels: honeypots({ count: 2 }),
-  datasets: [
-    {
-      label: "Attacks",
-      data: [2025, 849],
-      fill: false,
-      backgroundColor: ["lightgreen", "#8062D6"],
-      tension: 0.1,
-    },
-  ],
-};
-
-
 export const optionsHorizontal = {
   responsive: true,
   indexAxis: "y" as "y", // กำหนดเป็น "y" เพื่อให้กราฟเป็นแนวนอน

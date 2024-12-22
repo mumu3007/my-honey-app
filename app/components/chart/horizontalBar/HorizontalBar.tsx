@@ -8,7 +8,6 @@ import { useTheme } from "@mui/system";
 import DataCard from "@/app/components/chart/dataCard/DataCard";
 import DataChart from "@/app/components/dataChart";
 import {
-  barChartData,
   optionsHorizontal,
 } from "@/app/components/mockData";
 
