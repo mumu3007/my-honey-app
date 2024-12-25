@@ -22,14 +22,14 @@ export default function LineChart({honeypot, cowrie, dionaea}: {honeypot: any[];
     datasets: [
       {
         label: "Cowrie",
-        data: [74, 40, 90, 68, 62],
+        data: ["Low", "High","Medium", "Low", "Medium"], // ใช้ข้อมูลเป็นสตริง
         fill: false,
         borderColor: "#4c72b8",
         tension: 0.1,
       },
       {
         label: "Dionaea",
-        data: [66, 50, 75, 44, 90],
+        data: ["High", "Low", "Medium", "High", "Low"], // ใช้ข้อมูลเป็นสตริง
         fill: false,
         borderColor: "#b04859",
         tension: 0.1,
@@ -37,12 +37,21 @@ export default function LineChart({honeypot, cowrie, dionaea}: {honeypot: any[];
     ],
   };
 
+  const chartOptions = {
+    scales: {
+      y: {
+        type: "category", // ใช้ category scale สำหรับแกน Y
+        labels: ["High", "Medium", "Low"], // กำหนดหมวดหมู่ในแกน Y
+      },
+    },
+  };
+
   return (
     <Grid container gap={2} className={scss.wrapper}>
       <Paper className={scss.transactions}>
         <div className={scss.chart}>
           <Typography>Honeypot Attacks Histogram</Typography>
-          <DataChart type={"line"} data={lineChartData} />
+          <DataChart type={"line"} data={lineChartData} options={chartOptions} />
         </div>
       </Paper>
     </Grid>

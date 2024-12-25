@@ -40,7 +40,7 @@ export default function HorizontalBar({ top }: { top: any[] }) {
     <Grid container gap={2} className={scss.wrapper}>
       <Paper className={scss.transactions}>
         <div className={scss.chart}>
-          <Typography>Honeypot Attacks Bar(Horizontal)</Typography>
+          <Typography>Honeypot Attacks Bar(Protocol)</Typography>
           <DataChart
             type={"bar"}
             data={horizontalChartData}

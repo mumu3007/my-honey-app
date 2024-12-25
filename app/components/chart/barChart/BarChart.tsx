@@ -14,27 +14,27 @@ export type BarChartProps = {
   dionaea_atk: number,
 };
 
-export default function BarChart(props: BarChartProps) {
-  const { cowrie_atk, dionaea_atk } = props;
-
-  const barChartData = {
-    labels: ["cowrie", "dionaea"],
-    datasets: [
-      {
-        label: "Attacks",
-        data: [cowrie_atk, dionaea_atk],
-        fill: false,
-        backgroundColor: ["#5bc271", "#8062D6"],
-      },
-    ],
+export type BarChart2Props = {
+  chartData: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      fill: boolean;
+      backgroundColor: string[];
+    }[];
   };
-  
+  header: string
+};
+
+export default function BarChart({ chartData,header }: BarChart2Props) {
+
   return (
     <Grid container gap={2} className={scss.wrapper}>
       <Paper className={scss.transactions}>
         <div className={scss.chart}>
-          <Typography>Honeypot Attacks Bar</Typography>
-          <DataChart type={"bar"} data={barChartData} />
+          <Typography>{header}</Typography>
+          <DataChart type={"bar"} data={chartData} />
         </div>
       </Paper>
     </Grid>

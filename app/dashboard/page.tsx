@@ -24,16 +24,19 @@ const Dashboard = () => {
   const [cowrie, setCowrie] = useState([]);
   const [dionaea, setDionaea] = useState([]);
   const [top, setTop] = useState([]);
+  const [topUser, setTopUser] = useState<any>([]);
+  const [topUserCount, setTopUserCount] = useState<any>([]);
+  const [topPass, setTopPass] = useState<any>([]);;
+  const [topPassCount, setTopPassCount] = useState<any>([]);
   const [country, setCountry] = useState<any[]>([]);
 
   useEffect(() => {
-     const fetchData = async () => {
-       await fetchPosts(); // รอให้ fetchPosts เสร็จ
+    const fetchData = async () => {
+      await fetchPosts(); // รอให้ fetchPosts เสร็จ
       //  fetchCountry(); // จากนั้นค่อยทำ fetchCountry
-     };
+    };
 
-     fetchData();
-     
+    fetchData();
   }, []);
 
   const fetchPosts = async () => {
@@ -42,13 +45,42 @@ const Dashboard = () => {
       const cowrie = await axios.get("/api/honeypots/cowrie");
       const dionaea = await axios.get("/api/honeypots/dionaea");
       const top = await axios.get("/api/honeypots/protocols/top");
-      
+      const topUser = await axios.get("/api/honeypots/username/top");
+      const topPass = await axios.get("/api/honeypots/password/top");
+
       setHoneypot(honeypot.data);
       setCowrie(cowrie.data);
       setDionaea(dionaea.data);
       setTop(top.data);
-      console.log(honeypot);
-      
+      setTopUser(topUser.data);
+      setTopPass(topPass.data);
+      console.log(topUser);
+
+      const topUsername: string[] = [];
+      const topUsernameCount: string[] = [];
+      const test = await topUser.data.map((i: any) => {
+        const username = i.name;
+        const count = i.count;
+        topUsername.push(username);
+        topUsernameCount.push(count);
+      });
+      console.log(test);
+      console.log(topUsername);
+      setTopUser(topUsername); // เซ็ตประเทศที่ไม่ซ้ำกันใน state
+      setTopUserCount(topUsernameCount); // เซ็ตประเทศที่ไม่ซ้ำกันใน state
+
+      const topPassword: string[] = [];
+      const topPasswordCount: string[] = [];
+      const pass = await topPass.data.map((i: any) => {
+        const password = i.name;
+        const count = i.count;
+        topPassword.push(password);
+        topPasswordCount.push(count);
+      });
+      console.log(test);
+      console.log(topUsername);
+      setTopPass(topPassword); // เซ็ตประเทศที่ไม่ซ้ำกันใน state
+      setTopPassCount(topPasswordCount); // เซ็ตประเทศที่ไม่ซ้ำกันใน state
 
       const uniqueCountries: string[] = []; // อาเรย์สำหรับเก็บประเทศที่ไม่ซ้ำกัน
 
@@ -80,6 +112,16 @@ const Dashboard = () => {
     }
   };
 
+  const getRandomColors = (count: any) => {
+     const colors = [];
+     for (let i = 0; i < count; i++) {
+       const hue = Math.floor(Math.random() * 360); // สุ่มเฉดสี (0-360 องศาในวงล้อสี)
+       const saturation = 40 + Math.random() * 20; // ความอิ่มตัว (70-90%)
+       const lightness = 50 + Math.random() * 10; // ความสว่าง (80-90%)
+       colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+     }
+     return colors;
+  };
   // const fetchCountry = async () => {
   //   try {
   //     console.log(honeypot)
@@ -122,24 +164,59 @@ const Dashboard = () => {
                 dionaea={dionaea}
               />
               <BarChart
-                cowrie_atk={cowrie.length}
-                dionaea_atk={dionaea.length}
+                header="Honeypot Attacks Bar"
+                chartData={{
+                  labels: ["cowrie", "dionaea"], // กำหนด labels
+                  datasets: [
+                    {
+                      label: "Cowrie Attacks",
+                      data: [cowrie.length, dionaea.length], // กรณีที่ใช้ข้อมูล cowrie
+                      fill: false,
+                      backgroundColor: ["#5bc271", "#8062D6"], // กำหนดสี
+                    },
+                  ],
+                }}
               />
             </Grid>
 
-            <Doughnut cowrie_atk={cowrie.length} dionaea_atk={dionaea.length} country={country} honeypot={honeypot}/>
+            <Doughnut
+              cowrie_atk={cowrie.length}
+              dionaea_atk={dionaea.length}
+              country={country}
+              honeypot={honeypot}
+            />
 
             <Grid container className={scss.forChart2}>
               <Grid item xs={12}>
                 <BarChart
-                  cowrie_atk={cowrie.length}
-                  dionaea_atk={dionaea.length}
+                  header="Top Username"
+                  chartData={{
+                    labels: topUser,
+                    datasets: [
+                      {
+                        label: "Attacks",
+                        data: topUserCount, // ตัวอย่างกราฟที่ 1
+                        fill: false,
+                        backgroundColor: getRandomColors(8),
+                      },
+                    ],
+                  }}
                 />
               </Grid>
               <Grid item xs={12}>
                 <BarChart
-                  cowrie_atk={cowrie.length}
-                  dionaea_atk={dionaea.length}
+                  header="Top Password"
+                  chartData={{
+                    labels: topPass, // กรณีข้อมูล honeypot ที่ต่างกัน
+                    datasets: [
+                      {
+                        label: "attacks",
+                        data: topPassCount, // ตัวอย่างกราฟที่ 2
+                        fill: false,
+                        backgroundColor: getRandomColors(8),
+                      },
+                    ],
+                  }}
                 />
               </Grid>
             </Grid>

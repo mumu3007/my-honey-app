@@ -53,5 +53,18 @@ model Protocol {
 model Country {
   id      Int      @id @default(autoincrement())
   name    String
+  countryCode String
+  count   Int
+}
+
+model Username {
+  id      Int      @id @default(autoincrement())
+  name    String
+  count   Int
+}
+
+model Password {
+  id      Int      @id @default(autoincrement())
+  name    String
   count   Int
 }
