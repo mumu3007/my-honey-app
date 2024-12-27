@@ -60,12 +60,13 @@ const Dashboard = () => {
       // const uniqueCountries: string[] = []; // อาเรย์สำหรับเก็บประเทศที่ไม่ซ้ำกัน
 
       // const countryResults = await Promise.all(
-      //   honeypot.data.map(async (i: any) => {
+      //   getHoneypot.data.map(async (i: any) => {
       //     const ip = i.ip_attacker;
       //     if (ip) {
       //       const countryResponse = await axios.get(
       //         `http://ip-api.com/json/${ip}`
       //       );
+      //       console.log(countryResponse);
       //       const country = countryResponse.data.country;
 
       //       // ตรวจสอบว่าประเทศนี้มีอยู่ในอาเรย์หรือยัง
