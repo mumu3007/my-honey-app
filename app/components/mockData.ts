@@ -2,20 +2,6 @@ import { months } from "@/app/helper/Util";
 import { honeypots } from "@/app/helper/Util";
 import { BorderClear, BorderColor } from "@mui/icons-material";
 
-export const optionsHorizontal = {
-  responsive: true,
-  indexAxis: "y" as "y", // กำหนดเป็น "y" เพื่อให้กราฟเป็นแนวนอน
-  plugins: {
-    legend: {
-      position: "top" as "top", // กำหนดตำแหน่งของ legend
-    },
-  },
-  scales: {
-    x: {
-      beginAtZero: true, // เริ่มจาก 0
-    },
-  },
-};
 
 
 export const optionsDoughnut = {

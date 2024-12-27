@@ -7,13 +7,25 @@ import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/system";
 import DataCard from "@/app/components/chart/dataCard/DataCard";
 import DataChart from "@/app/components/dataChart";
-import {
-  optionsHorizontal,
-} from "@/app/components/mockData";
 
 
-export type HorizontalBarProps = {
-  prop: []
+
+const chartOptions = {
+  plugins: {
+    legend: {
+      display: false, // ซ่อน legend
+    },
+  },
+  scales: {
+    x: {
+      title: {
+        display: true, // แสดง label สำหรับแกน Y
+        text: "Number of Attacks", // ข้อความกำกับแกน Y
+      },
+    },
+  },
+  responsive: true,
+  indexAxis: "y" as "y", // กำหนดเป็น "y" เพื่อให้กราฟเป็นแนวนอน
 };
 
 export default function HorizontalBar({ top }: { top: any[] }) {
@@ -44,7 +56,7 @@ export default function HorizontalBar({ top }: { top: any[] }) {
           <DataChart
             type={"bar"}
             data={horizontalChartData}
-            options={optionsHorizontal}
+            options={chartOptions}
           />
         </div>
       </Paper>

@@ -52,19 +52,19 @@ model Protocol {
 
 model Country {
   id      Int      @id @default(autoincrement())
-  name    String
+  ip_attacker    String
   countryCode String
   count   Int
 }
 
 model Username {
   id      Int      @id @default(autoincrement())
-  name    String
+  username    String
   count   Int
 }
 
 model Password {
   id      Int      @id @default(autoincrement())
-  name    String
+  password    String
   count   Int
 }
