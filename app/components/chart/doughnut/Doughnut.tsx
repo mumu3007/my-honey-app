@@ -18,7 +18,7 @@ import scss from "./Doughnut.module.scss";
 export type DoughnutProps = {
   cowrie_atk: number;
   dionaea_atk: number;
-  country: string[];
+  country: any[];
   honeypot: any[];
 };
 
@@ -40,17 +40,11 @@ export default function Doughnut(props: DoughnutProps) {
   };
 
   const doughnutChartData2 = {
-    labels: country,
+    labels: country.map((i) => i.country),
     datasets: [
       {
         label: "Attacks",
-        data: [
-          honeypot.filter((i) => i.ip_attacker == "25.48.0.1").length,
-          honeypot.filter((i) => i.ip_attacker == "24.48.0.1").length,
-          honeypot.filter((i) => i.ip_attacker == "26.48.0.1").length,
-          honeypot.filter((i) => i.ip_attacker == "27.48.0.1").length,
-          honeypot.filter((i) => i.ip_attacker == "49.48.0.1").length,
-        ],
+        data: country.map((i) => i.totalCount),
         backgroundColor: [
           "#b18a56",
           "#4c72b8",
