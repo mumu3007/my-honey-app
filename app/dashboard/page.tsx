@@ -4,16 +4,17 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import BarChart from "../components/chart/barChart/BarChart";
-import { Box, Grid } from "@mui/material";
-import HorizontalBar from "../components/chart/horizontalBar/HorizontalBar";
-import LineChart from "../components/chart/lineChart/LineChart";
+import BarChart from "../components/chart/barChart/barChart";
+import { Box, Grid, Paper } from "@mui/material";
+import HorizontalBar from "../components/chart/horizontalBar/horizontalBar";
+import LineChart from "../components/chart/lineChart/lineChart";
 import scss from "./Dashboard.module.scss";
-import DataCard from "../components/chart/dataCard/DataCard";
-import Doughnut from "../components/chart/doughnut/Doughnut";
+import DataCard from "../components/chart/dataCard/dataCard";
+import Doughnut from "../components/chart/doughnut/doughnut";
 import { Username } from "../interfaces/username";
 import { Password } from "../interfaces/password";
 import { Country } from "../interfaces/country";
+import { useSession } from "next-auth/react";
 
 const darkTheme = createTheme({
   palette: {
@@ -22,6 +23,9 @@ const darkTheme = createTheme({
 });
 
 const Dashboard = () => {
+    const {data: session, status} = useSession()
+    console.log('session', session)
+    console.log('status', status)
   const router = useRouter();
   const [honeypot, setHoneypot] = useState<any>([]);
   const [cowrie, setCowrie] = useState([]);
@@ -29,16 +33,18 @@ const Dashboard = () => {
   const [top, setTop] = useState([]);
   const [topCountry, setTopCountry] = useState<Country[]>([]);
   const [topUser, setTopUser] = useState<Username[]>([]);
-  const [topPass, setTopPass] = useState<Password[]>([]);;
+  const [topPass, setTopPass] = useState<Password[]>([]);
   const [country, setCountry] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchPosts();
-    };
-
-    fetchData();
-  }, []);
+    if (status === "unauthenticated"){
+      router.push("/")
+    }
+    else {
+      fetchPosts();
+    }
+    
+  }, [router, status]);
 
   const fetchPosts = async () => {
     try {
@@ -65,7 +71,6 @@ const Dashboard = () => {
   };
 
   const getRandomColors = (count: any) => {
-
     const colors = [];
     const step = Math.floor(360 / count); // ระยะห่างเฉดสีในวงล้อ
     for (let i = 0; i < count; i++) {
@@ -81,20 +86,12 @@ const Dashboard = () => {
     }
     return colors;
   };
-  // const fetchCountry = async () => {
-  //   try {
-  //     console.log(honeypot)
-  //     // เรียกใช้ข้อมูล country สำหรับแต่ละ honeypot โดยใช้ ip_attacker
-  //     // const country = await axios.get(`http://ip-api.com/json/$`);
-  //     // return country.data; // คืนค่าผลลัพธ์จากแต่ละ ip
-  //   } catch (error) {
-  //     console.error("Error fetching country data:", error);
-  //   }
-  // };
+
 
   return (
+    status === "authenticated" && session.user && (
     <ThemeProvider theme={darkTheme}>
-      <div className="px-24 py-12">
+      <div className="px-24 py-8">
         <Box>
           {/* <div>{country?.country}</div> */}
           <Grid container gap={2} marginTop={0}>
@@ -131,7 +128,7 @@ const Dashboard = () => {
                       label: "Attacks",
                       data: [cowrie.length, dionaea.length], // กรณีที่ใช้ข้อมูล cowrie
                       fill: false,
-                      backgroundColor: ["#5bc271", "#8062D6"], // กำหนดสี
+                      backgroundColor: getRandomColors(2), // กำหนดสี
                     },
                   ],
                 }}
@@ -176,7 +173,7 @@ const Dashboard = () => {
                       },
                     ],
                   }}
-                  />
+                />
               </Grid>
             </Grid>
           </Grid>
@@ -197,6 +194,7 @@ const Dashboard = () => {
         </Box>
       </div>
     </ThemeProvider>
+    )
   );
 };
 

@@ -5,10 +5,24 @@ import scss from "./HorizontalBar.module.scss";
 import { Card, Grid, Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/system";
-import DataCard from "@/app/components/chart/dataCard/DataCard";
 import DataChart from "@/app/components/dataChart";
 
-
+const getRandomColors = (count: any) => {
+  const colors = [];
+  const step = Math.floor(360 / count); // ระยะห่างเฉดสีในวงล้อ
+  for (let i = 0; i < count; i++) {
+    const hue = (i * step) % 360; // กระจายเฉดสีในวงล้อ
+    const saturation = 40 + Math.random() * 20; // ความอิ่มตัว (70-90%)
+    const lightness = 50 + Math.random() * 10; // ความสว่าง (80-90%)
+    colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`); // สร้างสีในรูปแบบ HSL
+  }
+  // สุ่มลำดับสีในอาร์เรย์
+  for (let i = colors.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [colors[i], colors[j]] = [colors[j], colors[i]]; // สลับตำแหน่ง
+  }
+  return colors;
+};
 
 const chartOptions = {
   plugins: {
@@ -36,13 +50,7 @@ export default function HorizontalBar({ top }: { top: any[] }) {
         label: "Protocol",
         data: top.map((protocol) => protocol.count),
         fill: false,
-        backgroundColor: [
-          "#b18a56",
-          "#b04859",
-          "#9847b4",
-          "#4c72b8",
-          "#6cbc64",
-        ],
+        backgroundColor: getRandomColors(7),
         tension: 0.1,
       },
     ],

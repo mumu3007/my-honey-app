@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { getServerSession } from 'next-auth'
 
 const prisma = new PrismaClient()
 

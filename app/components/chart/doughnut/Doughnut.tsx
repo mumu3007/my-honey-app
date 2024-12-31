@@ -22,6 +22,23 @@ export type DoughnutProps = {
   honeypot: any[];
 };
 
+const getRandomColors = (count: any) => {
+  const colors = [];
+  const step = Math.floor(360 / count); // ระยะห่างเฉดสีในวงล้อ
+  for (let i = 0; i < count; i++) {
+    const hue = (i * step) % 360; // กระจายเฉดสีในวงล้อ
+    const saturation = 40 + Math.random() * 20; // ความอิ่มตัว (70-90%)
+    const lightness = 50 + Math.random() * 10; // ความสว่าง (80-90%)
+    colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`); // สร้างสีในรูปแบบ HSL
+  }
+  // สุ่มลำดับสีในอาร์เรย์
+  for (let i = colors.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [colors[i], colors[j]] = [colors[j], colors[i]]; // สลับตำแหน่ง
+  }
+  return colors;
+};
+
 export default function Doughnut(props: DoughnutProps) {
 
   const { cowrie_atk, dionaea_atk, country, honeypot } = props;
@@ -32,7 +49,7 @@ export default function Doughnut(props: DoughnutProps) {
       {
         label: "Attacks",
         data: [cowrie_atk, dionaea_atk],
-        backgroundColor: ["#55ad59", "#3f6296"],
+        backgroundColor: getRandomColors(7),
         borderWidth: 1,
         hoverOffset: 4,
       },
@@ -45,13 +62,7 @@ export default function Doughnut(props: DoughnutProps) {
       {
         label: "Attacks",
         data: country.map((i) => i.totalCount),
-        backgroundColor: [
-          "#b18a56",
-          "#4c72b8",
-          "#b04859",
-          "#6cbc64",
-          "#9847b4",
-        ],
+        backgroundColor: getRandomColors(6),
         borderWidth: 1,
         hoverOffset: 4,
       },

@@ -14,7 +14,7 @@ export async function GET() {
           count: 'desc',
         },
       },
-      take: 5,
+      take: 4,
     });
 
     const excludedCountries = topCountries.map(country => country.country);
