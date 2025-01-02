@@ -29,7 +29,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0e0f12]`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white border-gray-200 dark:bg-gray-700 dark:border-gray-700`}
       >
         <SessionProvider session={session}>
           <Navbar />

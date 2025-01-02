@@ -4,10 +4,11 @@ import React from "react";
 // import scss from "./BarChart.module.scss";
 import { Card, Grid, Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { useTheme } from "@mui/system";
+import { display, useTheme } from "@mui/system";
 import DataChart from "@/app/components/dataChart";
 // import { barChartData } from "@/app/components/mockData";
 import scss from "./BarChart.module.scss";
+import { darkOptions } from "../../dataChart/theme";
 
 export type BarChartProps = {
   cowrie_atk: number,
@@ -34,6 +35,7 @@ export default function BarChart({ chartData, header }: BarChart2Props) {
   );
 
   const chartOptions = {
+    ...darkOptions,
     plugins: {
       legend: {
         display: false, // ซ่อน legend
@@ -49,10 +51,13 @@ export default function BarChart({ chartData, header }: BarChart2Props) {
       },
     },
     scales: {
+      ...darkOptions!.scales,
       y: {
+        ...darkOptions!.scales!.y,
         title: {
-          display: true, // แสดง label สำหรับแกน Y
-          text: "Number of Attacks", // ข้อความกำกับแกน Y
+          color: "#ffffff",
+          display: true, // แสดง title ของ x-axis
+          text: "Number of Attacks", // กำหนด title ของ x-axis จาก props
         },
       },
     },
@@ -60,8 +65,8 @@ export default function BarChart({ chartData, header }: BarChart2Props) {
 
   return (
     <Grid container gap={2} className={scss.wrapper}>
-      <Paper className={scss.transactions}>
-        <div className={scss.chart}>
+      <Paper className="block justify-center px-4 py-2 w-full gap-1 bg-[#171d28] border-[2px] border-gray-900 md:flex ">
+        <div className="max-w-[100%] w-full">
           <Typography>{header}</Typography>
           <DataChart
             type={"bar"}

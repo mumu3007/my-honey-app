@@ -1,9 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import scss from "./Navbar.module.scss";
 import { createTheme, Paper, ThemeProvider } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
 import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const darkTheme = createTheme({
   palette: {
@@ -11,17 +13,127 @@ const darkTheme = createTheme({
   },
 });
 
+const stringToColor = (string: string) => {
+  let hash = 0;
+  let i;
+
+  /* eslint-disable no-bitwise */
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let color = "#";
+
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += `00${value.toString(16)}`.slice(-2);
+  }
+  /* eslint-enable no-bitwise */
+
+  return color;
+}
+
+const stringAvatar = (name: string) => {
+  console.log(name)
+  return {
+    sx: {
+      bgcolor: stringToColor(name),
+    },
+    children: `${name.split(" ")[0]?.[0] || ""}${name.split(" ")[1]?.[0] || ""}`,
+  };
+}
+
 export default function Navbar() {
   const {data: session, status} = useSession()
   console.log('session', session)
   console.log('status', status)
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => setIsOpen(!isOpen);
+
+  const closeMenu = () => setIsOpen(false);
   
   return (
     <ThemeProvider theme={darkTheme}>
-      <Paper className="flex h-16 justify-center items-center gap-2">
-        <div>{session?.user.name}</div>
-        <div>{session?.user.email}</div>
-        <button onClick={() => signOut({callbackUrl: '/'})}>LogOut</button>
+      <Paper className="flex h-20 justify-between items-center gap-2 px-28 bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+        <div className="flex items-center text-lg font-bold gap-2">
+          <img src="/logo.png" alt="" className="w-12 h-12" />
+          MyHoney
+        </div>
+        <div className="flex gap-20 ">
+          <div>Home</div>
+          <div>Public</div>
+          <a href="/dashboard">My Dashboard</a>
+        </div>
+        <div className="flex gap-4 items-center">
+          <div>
+            Hi,<span className="ml-1">{session?.user.name}</span>
+          </div>
+          <div className="relative">
+            {session?.user.image ? (
+              <img
+                // alt="tania andrew"
+                src={session?.user.image!}
+                className="relative inline-block h-10 w-10 cursor-pointer rounded-full object-cover object-center"
+                onClick={toggleMenu} // เปิด/ปิดเมนู
+              />
+            ) : session?.user.name! ? (
+              <Avatar
+                {...stringAvatar(session?.user.name!)}
+                onClick={toggleMenu}
+              />
+            ) : (
+              <Avatar onClick={toggleMenu} />
+            )}
+
+            {/* Dropdown Menu */}
+            {isOpen && (
+              <ul
+                role="menu"
+                className="absolute right-0 z-10 min-w-[180px] overflow-auto rounded-lg border border-slate-200 bg-white p-1.5 shadow-lg shadow-sm"
+              >
+                <li
+                  onClick={() => {closeMenu(); router.push('/profile')}}
+                  role="menuitem"
+                  className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
+                >
+                  My Profile
+                </li>
+                <li
+                  role="menuitem"
+                  className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
+                >
+                  Settings
+                </li>
+                <li
+                  role="menuitem"
+                  className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
+                >
+                  Inbox
+                </li>
+                <hr className="my-2 border-slate-200" />
+                <li
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  role="menuitem"
+                  className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
+                >
+                  Sign Out
+                </li>
+              </ul>
+            )}
+
+            {/* ปิดเมนูเมื่อคลิกด้านนอก */}
+            {isOpen && (
+              <div
+                className="fixed inset-0 z-0"
+                onClick={closeMenu} // คลิกที่อื่นเพื่อปิดเมนู
+              />
+            )}
+          </div>
+          {/* <div>{session?.user.email}</div> */}
+          {/* <button onClick={() => signOut({ callbackUrl: "/" })}>LogOut</button> */}
+        </div>
       </Paper>
     </ThemeProvider>
   );

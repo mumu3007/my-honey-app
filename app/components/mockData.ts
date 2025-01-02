@@ -12,13 +12,14 @@ export const optionsDoughnut = {
       position: "right" as "right", // เปลี่ยนตำแหน่ง Labels ("top", "left", "right", "bottom")
       display: true,
       labels: {
+        color: "#ffffff",
         usePointStyle: true, // ใช้สัญลักษณ์แบบวงกลม
         pointStyle: "circle", // ระบุให้เป็นวงกลม
         boxWidth: 7, // ขนาดของวงกลม (ค่าเริ่มต้นคือ 40)
         boxHeight: 7, // ความสูงของวงกลม
       }
     }
-  }
+  },
 };
 
 export const doughnutChartData1 = {

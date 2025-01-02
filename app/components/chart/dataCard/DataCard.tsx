@@ -16,14 +16,14 @@ export default function DataCard(props: DataCardProps) {
   const formattedValue = new Intl.NumberFormat("en-US").format(value);
 
   return (
-    <Paper className={scss.dataCard}>
+    <Paper className="relative top-4 h-full w-[calc(100%-0.1rem)] p-2 bg-[#171d28] border-[2px] border-gray-900">
       <Typography
         className={`text-3xl font-semibold ${
-          value >= 10000
+          value >= 30
             ? "text-red-400"
-            : value >= 1000
+            : value >= 20
             ? "text-yellow-300"
-            : value >= 100
+            : value >= 10
             ? "text-yellow-100"
             : ""
         }`}

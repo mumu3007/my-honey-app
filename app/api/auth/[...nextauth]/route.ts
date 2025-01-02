@@ -59,11 +59,24 @@ export const authOptions: AuthOptions = {
       if (user) {
         token.id = user.id // Store user id in the token
       }
+
+      const dbUser = await prisma.user.findUnique({
+      where: { id: token.id as number },
+    });
+
+    if (dbUser) {
+      token.name = dbUser.name; // เก็บชื่อใหม่ใน token
+      token.email = dbUser.email; // เก็บอีเมลใหม่ใน token
+      token.picture = dbUser.image; // อัปเดตโปรไฟล์รูปภาพ
+    }
+
       return token
     },
     session: async ({ session, token }) => {
       if (session.user) {
         session.user.id = token.id as number // Include user id in the session
+        session.user.name = token.name! || ""; // ใช้ข้อมูลที่อัปเดตใน session
+        session.user.email = token.email! || "";
         session.user.image = token.picture // Include user id in the session
       }
       return session

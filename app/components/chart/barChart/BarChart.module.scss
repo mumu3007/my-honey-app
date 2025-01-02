@@ -11,7 +11,7 @@ $breakPoint: 1000px;
     padding: 1rem 2rem;
     width: 100%;
     gap:4px;
-
+    background-color: #1d2432;
     @media screen and (min-width: $breakPoint) {
         display: flex;
     }

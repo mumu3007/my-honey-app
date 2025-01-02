@@ -6,6 +6,7 @@ import { Card, Grid, Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/system";
 import DataChart from "@/app/components/dataChart";
+import { darkOptions } from "../../dataChart/theme";
 
 const getRandomColors = (count: any) => {
   const colors = [];
@@ -31,10 +32,13 @@ const chartOptions = {
     },
   },
   scales: {
+    ...darkOptions!.scales,
     x: {
+      ...darkOptions!.scales!.x,
       title: {
-        display: true, // แสดง label สำหรับแกน Y
-        text: "Number of Attacks", // ข้อความกำกับแกน Y
+        color: "#ffffff",
+        display: true, // แสดง title ของ x-axis
+        text: "Number of Attacks", // กำหนด title ของ x-axis จาก props
       },
     },
   },
@@ -58,7 +62,7 @@ export default function HorizontalBar({ top }: { top: any[] }) {
 
   return (
     <Grid container gap={2} className={scss.wrapper}>
-      <Paper className={scss.transactions}>
+      <Paper className="block justify-center px-4 py-2 w-full bg-[#171d28]  border-[2px] border-gray-900 md:flex">
         <div className={scss.chart}>
           <Typography>Honeypot Attacks Bar(Protocol)</Typography>
           <DataChart

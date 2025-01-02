@@ -72,8 +72,8 @@ export default function Doughnut(props: DoughnutProps) {
   return (
     <Grid container className={scss.bottomRow}>
       <Grid>
-        <Paper className={scss.dataCard}>
-          <p>Attacks By Honeypots</p>
+        <Paper className="relative top-0 h-full w-[calc(100%-0.1rem)] p-2 pb-4 bg-[#171d28] border-[2px] border-gray-900">
+          <p className="p-2 px-4 m-0">Attacks By Honeypots</p>
           <DataChart
             type={"doughnut"}
             data={doughnutChartData1}
@@ -82,8 +82,8 @@ export default function Doughnut(props: DoughnutProps) {
         </Paper>
       </Grid>
       <Grid>
-        <Paper className={scss.dataCard}>
-          <p>Attacks By Country</p>
+        <Paper className="relative top-0 h-full w-[calc(100%-0.1rem)] p-2 pb-4 bg-[#171d28] border-[2px] border-gray-900">
+          <p className="p-2 px-4 m-0">Attacks By Country</p>
           <DataChart
             type={"doughnut"}
             data={doughnutChartData2}
@@ -92,8 +92,8 @@ export default function Doughnut(props: DoughnutProps) {
         </Paper>
       </Grid>
       <Grid>
-        <Paper className={scss.dataCard}>
-          <p>Attacks By Destination Port</p>
+        <Paper className="relative top-0 h-full w-[calc(100%-0.1rem)] p-2 pb-4 bg-[#171d28] border-[2px] border-gray-900">
+          <p className="p-2 px-4 m-0">Attacks By Destination Port</p>
           <DataChart
             type={"doughnut"}
             data={doughnutChartData3}
@@ -102,8 +102,8 @@ export default function Doughnut(props: DoughnutProps) {
         </Paper>
       </Grid>
       <Grid>
-        <Paper className={scss.dataCard}>
-          <p>Top Attacker's Username </p>
+        <Paper className="relative top-0 h-full w-[calc(100%-0.1rem)] p-2 pb-4 bg-[#171d28] border-[2px] border-gray-900">
+          <p className="p-2 px-4 m-0">Top Attacker's Username </p>
           <DataChart
             type={"doughnut"}
             data={doughnutChartData4}
