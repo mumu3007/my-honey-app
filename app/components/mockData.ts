@@ -22,34 +22,6 @@ export const optionsDoughnut = {
   },
 };
 
-export const doughnutChartData1 = {
-  labels: ["Cowrie", "Dioneae"],
-  datasets: [
-    {
-      label: "Attacks",
-      data: [2025, 849],
-      backgroundColor: ["#55ad59", "#3f6296"],
-      borderWidth: 1,
-      hoverOffset: 4,
-    },
-    
-  ],
-};
-
-export const doughnutChartData2 = {
-  labels: ["China", "UK", "US", "Vietnam", "Russia"],
-  datasets: [
-    {
-      label: "Transaction Dataset",
-      data: [875, 460, 931, 308, 300],
-      backgroundColor: ["#b18a56", "#b04859", "#9847b4", "#4c72b8", "#6cbc64"],
-      borderWidth: 1,
-      hoverOffset: 4,
-    },
-    
-  ],
-};
-
 export const doughnutChartData3 = {
   labels: ["Red", "Blue", "Yellow"],
   datasets: [

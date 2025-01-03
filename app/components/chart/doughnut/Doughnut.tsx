@@ -8,8 +8,6 @@ import { useTheme } from "@mui/system";
 import DataChart from "@/app/components/dataChart";
 import {
   optionsDoughnut,
-  doughnutChartData1,
-  doughnutChartData2,
   doughnutChartData3,
   doughnutChartData4,
 } from "@/app/components/mockData";
@@ -20,6 +18,8 @@ export type DoughnutProps = {
   dionaea_atk: number;
   country: any[];
   honeypot: any[];
+  username: any[];
+  port: any[];
 };
 
 const getRandomColors = (count: any) => {
@@ -41,7 +41,7 @@ const getRandomColors = (count: any) => {
 
 export default function Doughnut(props: DoughnutProps) {
 
-  const { cowrie_atk, dionaea_atk, country, honeypot } = props;
+  const { cowrie_atk, dionaea_atk, country, honeypot, username, port } = props;
 
   const doughnutChartData1 = {
     labels: ["Cowrie", "Dioneae"],
@@ -57,12 +57,39 @@ export default function Doughnut(props: DoughnutProps) {
   };
 
   const doughnutChartData2 = {
-    labels: country.map((i) => i.country),
+    labels: country.map((i) =>
+      i.country.length > 8 ? i.countryCode : i.country ),
     datasets: [
       {
         label: "Attacks",
         data: country.map((i) => i.totalCount),
-        backgroundColor: getRandomColors(6),
+        backgroundColor: getRandomColors(7),
+        borderWidth: 1,
+        hoverOffset: 4,
+      },
+    ],
+  };
+
+  const doughnutChartData3 = {
+    labels: port.map((i) => i.destinationPort),
+    datasets: [
+      {
+        label: "Attacks",
+        data: port.map((i) => i.totalCount),
+        backgroundColor: getRandomColors(7),
+        borderWidth: 1,
+        hoverOffset: 4,
+      },
+    ],
+  };
+  
+  const doughnutChartData4 = {
+    labels: username.map((i) => i.username),
+    datasets: [
+      {
+        label: "Attacks",
+        data: username.map((i) => i.totalCount),
+        backgroundColor: getRandomColors(7),
         borderWidth: 1,
         hoverOffset: 4,
       },

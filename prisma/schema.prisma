@@ -61,6 +61,7 @@ model Honeypot {
   comment     String
   username    String
   password    String
+  destinationPort String
 }
 
 model Protocol {
@@ -86,5 +87,11 @@ model Username {
 model Password {
   id      Int      @id @default(autoincrement())
   password    String
+  count   Int
+}
+
+model Port {
+  id      Int      @id @default(autoincrement())
+  destinationPort    String
   count   Int
 }

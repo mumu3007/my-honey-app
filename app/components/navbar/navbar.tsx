@@ -61,10 +61,31 @@ export default function Navbar() {
           <img src="/logo.png" alt="" className="w-12 h-12" />
           MyHoney
         </div>
-        <div className="flex gap-20 ">
-          <div>Home</div>
-          <div>Public</div>
-          <a href="/dashboard">My Dashboard</a>
+        <div className="flex w-[32%] gap-20 justify-between items-center">
+          <div className="w-1/3">
+            <button
+              onClick={() => router.push("/home")}
+              className="transition hover:scale-125 hover:font-medium duration-200"
+            >
+              Home
+            </button>
+          </div>
+          <div className="w-1/3">
+            <button
+              onClick={() => router.push("/public")}
+              className="transition hover:scale-125 hover:font-medium duration-200"
+            >
+              Public
+            </button>
+          </div>
+          <div className="w-1/3">
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="transition hover:scale-125 hover:font-medium duration-200"
+            >
+              Dashboard
+            </button>
+          </div>
         </div>
         <div className="flex gap-4 items-center">
           <div>
@@ -94,7 +115,10 @@ export default function Navbar() {
                 className="absolute right-0 z-10 min-w-[180px] overflow-auto rounded-lg border border-slate-200 bg-white p-1.5 shadow-lg shadow-sm"
               >
                 <li
-                  onClick={() => {closeMenu(); router.push('/profile')}}
+                  onClick={() => {
+                    closeMenu();
+                    router.push("/profile");
+                  }}
                   role="menuitem"
                   className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
                 >

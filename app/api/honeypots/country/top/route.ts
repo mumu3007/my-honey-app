@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const topCountries = await prisma.country.groupBy({
-      by: ['country'],
+      by: ['country', 'countryCode'],
       _sum: {
         count: true,
       },
@@ -20,7 +20,7 @@ export async function GET() {
     const excludedCountries = topCountries.map(country => country.country);
 
     const others = await prisma.country.groupBy({
-      by: ['country'],
+      by: ['country', 'countryCode'],
       _sum: {
         count: true,
       },
@@ -35,11 +35,13 @@ export async function GET() {
 
     const Result = topCountries.map(country => ({
       country: country.country,
+      countryCode: country.countryCode,
       totalCount: country._sum.count,
     }));
 
     Result.push({
         country: "others",
+        countryCode: "others",
         totalCount: othersTotalCount,
     })
 

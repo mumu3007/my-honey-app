@@ -14,6 +14,7 @@ import Doughnut from "../components/chart/doughnut/doughnut";
 import { Username } from "../interfaces/username";
 import { Password } from "../interfaces/password";
 import { Country } from "../interfaces/country";
+import { Port } from "../interfaces/port";
 import { useSession } from "next-auth/react";
 
 const darkTheme = createTheme({
@@ -33,6 +34,8 @@ const Dashboard = () => {
   const [top, setTop] = useState([]);
   const [topCountry, setTopCountry] = useState<Country[]>([]);
   const [topUser, setTopUser] = useState<Username[]>([]);
+  const [topUsername, setTopUsername] = useState<Username[]>([]);
+  const [topPort, setTopPort] = useState<Port[]>([]);
   const [topPass, setTopPass] = useState<Password[]>([]);
   const [country, setCountry] = useState<any[]>([]);
 
@@ -53,6 +56,8 @@ const Dashboard = () => {
       const getDionaea = await axios.get("/api/honeypots/dionaea");
       const getTop = await axios.get("/api/honeypots/protocols/top");
       const getTopUser = await axios.get("/api/honeypots/username/top");
+      const getTopUsername = await axios.get("/api/honeypots/username/top5");
+      const getTopPort = await axios.get("/api/honeypots/port/top5");
       const getTopPass = await axios.get("/api/honeypots/password/top");
       const getTopCountry = await axios.get("/api/honeypots/country/top");
 
@@ -61,6 +66,8 @@ const Dashboard = () => {
       setDionaea(getDionaea.data);
       setTop(getTop.data);
       setTopUser(getTopUser.data);
+      setTopUsername(getTopUsername.data);
+      setTopPort(getTopPort.data);
       setTopPass(getTopPass.data);
       setTopCountry(getTopCountry.data);
 
@@ -140,6 +147,8 @@ const Dashboard = () => {
               dionaea_atk={dionaea.length}
               country={topCountry}
               honeypot={honeypot}
+              port={topPort}
+              username={topUsername}
             />
 
             <Grid container className={scss.forChart2}>
