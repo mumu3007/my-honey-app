@@ -12,18 +12,23 @@ export type LineChartProps = {
   dionaea: [];
 };
 
-export default function LineChart({honeypot, cowrie, dionaea}: {honeypot: any[]; cowrie: any[]; dionaea: any[];}) {
-
-  const latestHoneypots = honeypot.slice(-5);
+export default function LineChart({
+  attacks,
+  cowrie,
+  dionaea,
+}: {
+  attacks: any[];
+  cowrie: any[];
+  dionaea: any[];
+}) {
+  const latestAttacks = attacks.slice(-5);
 
   const lineChartData = {
-    labels: latestHoneypots.map(
-      (i) => i.createdAt.split("T")[1]?.split("Z")[0]
-    ),
+    labels: latestAttacks.map((i) => i.createdAt.split("T")[1]?.split("Z")[0]),
     datasets: [
       {
         label: "Cowrie",
-        data: ["Low", "High","Medium", "Low", "Medium"], // ใช้ข้อมูลเป็นสตริง
+        data: ["Low", "High", "Medium", "Low", "Medium"], // ใช้ข้อมูลเป็นสตริง
         fill: false,
         borderColor: "#4c72b8",
         tension: 0.1,

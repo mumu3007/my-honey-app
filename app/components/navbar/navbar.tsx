@@ -45,8 +45,8 @@ const stringAvatar = (name: string) => {
 
 export default function Navbar() {
   const {data: session, status} = useSession()
-  console.log('session', session)
-  console.log('status', status)
+  // console.log('session', session)
+  // console.log('status', status)
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 

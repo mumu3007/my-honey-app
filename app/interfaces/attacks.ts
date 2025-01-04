@@ -1,4 +1,4 @@
-export interface Honeypot {
+export interface Attacks {
   id: number;
   name: string;
   alert: String;

@@ -16,6 +16,7 @@ import { Password } from "../interfaces/password";
 import { Country } from "../interfaces/country";
 import { Port } from "../interfaces/port";
 import { useSession } from "next-auth/react";
+import { Honeypots } from "../interfaces/honeypots";
 
 const darkTheme = createTheme({
   palette: {
@@ -24,11 +25,11 @@ const darkTheme = createTheme({
 });
 
 const Dashboard = () => {
-    const {data: session, status} = useSession()
-    console.log('session', session)
-    console.log('status', status)
+  const { data: session, status } = useSession();
+  // console.log("session", session);
+  // console.log("status", status);
   const router = useRouter();
-  const [honeypot, setHoneypot] = useState<any>([]);
+  const [attacks, setAttacks] = useState<any>([]);
   const [cowrie, setCowrie] = useState([]);
   const [dionaea, setDionaea] = useState([]);
   const [top, setTop] = useState([]);
@@ -37,31 +38,32 @@ const Dashboard = () => {
   const [topUsername, setTopUsername] = useState<Username[]>([]);
   const [topPort, setTopPort] = useState<Port[]>([]);
   const [topPass, setTopPass] = useState<Password[]>([]);
-  const [country, setCountry] = useState<any[]>([]);
+  const [honeypots, setHoneypots] = useState<Honeypots[]>([]);
+
 
   useEffect(() => {
-    if (status === "unauthenticated"){
-      router.push("/")
-    }
-    else {
+    console.log("UseEffect Worked!!!")
+    if (status === "unauthenticated") {
+      router.push("/");
+    } else {
       fetchPosts();
     }
-    
   }, [router, status]);
 
   const fetchPosts = async () => {
     try {
-      const getHoneypot = await axios.get("/api/honeypots");
-      const getCowrie = await axios.get("/api/honeypots/cowrie");
-      const getDionaea = await axios.get("/api/honeypots/dionaea");
-      const getTop = await axios.get("/api/honeypots/protocols/top");
-      const getTopUser = await axios.get("/api/honeypots/username/top");
-      const getTopUsername = await axios.get("/api/honeypots/username/top5");
-      const getTopPort = await axios.get("/api/honeypots/port/top5");
-      const getTopPass = await axios.get("/api/honeypots/password/top");
-      const getTopCountry = await axios.get("/api/honeypots/country/top");
+      const getAttacks = await axios.get("/api/attacks");
+      const getCowrie = await axios.get("/api/attacks/cowrie");
+      const getDionaea = await axios.get("/api/attacks/dionaea");
+      const getTop = await axios.get("/api/attacks/protocols/top");
+      const getTopUser = await axios.get("/api/attacks/username/top");
+      const getTopUsername = await axios.get("/api/attacks/username/top5");
+      const getTopPort = await axios.get("/api/attacks/port/top5");
+      const getTopPass = await axios.get("/api/attacks/password/top");
+      const getTopCountry = await axios.get("/api/attacks/country/top");
+      const getHoneypots = await axios.get("/api/honeypots")
 
-      setHoneypot(getHoneypot.data);
+      setAttacks(getAttacks.data);
       setCowrie(getCowrie.data);
       setDionaea(getDionaea.data);
       setTop(getTop.data);
@@ -70,8 +72,10 @@ const Dashboard = () => {
       setTopPort(getTopPort.data);
       setTopPass(getTopPass.data);
       setTopCountry(getTopCountry.data);
+      setHoneypots(getHoneypots.data);
 
-      console.log(getTopCountry.data);
+      console.log(getHoneypots.data);
+       console.log("fetch Work!!!");
     } catch (error) {
       console.error(error);
     }
@@ -94,99 +98,101 @@ const Dashboard = () => {
     return colors;
   };
 
-
   return (
-    status === "authenticated" && session.user && (
-    <ThemeProvider theme={darkTheme}>
-      <div className="px-24 py-8">
-        <Box>
-          {/* <div>{country?.country}</div> */}
-          <Grid container gap={2} marginTop={0}>
-            <Grid container gap={5} className={scss.dataRibbon}>
-              <Grid>
-                <DataCard
-                  title={"Cowrie-Attacks"}
-                  value={cowrie.length}
-                  description={"Number of Cowrie attack"}
-                />
+    status === "authenticated" &&
+    session.user && (
+      <ThemeProvider theme={darkTheme}>
+        <div className="px-24 py-8">
+          <Box>
+            {/* <div>{country?.country}</div> */}
+            <Grid container gap={2} marginTop={0}>
+              <Grid container gap={5} className={scss.dataRibbon}>
+                <Grid>
+                  <DataCard
+                    title={"Cowrie-Attacks"}
+                    value={cowrie.length}
+                    description={"Number of Cowrie attack"}
+                  />
+                </Grid>
+                <Grid>
+                  <DataCard
+                    title={"Dionaea-Attacks"}
+                    value={dionaea.length}
+                    description={"Number of Dionaea attack"}
+                  />
+                </Grid>
               </Grid>
-              <Grid>
-                <DataCard
-                  title={"Dionaea-Attacks"}
-                  value={dionaea.length}
-                  description={"Number of Dionaea attack"}
+
+              <Grid container className={scss.forChart}>
+                <HorizontalBar top={top} />
+                <LineChart
+                  attacks={attacks}
+                  cowrie={cowrie}
+                  dionaea={dionaea}
                 />
-              </Grid>
-            </Grid>
-
-            <Grid container className={scss.forChart}>
-              <HorizontalBar top={top} />
-              <LineChart
-                honeypot={honeypot}
-                cowrie={cowrie}
-                dionaea={dionaea}
-              />
-              <BarChart
-                header="Honeypot Attacks Bar"
-                chartData={{
-                  labels: ["cowrie", "dionaea"], // กำหนด labels
-                  datasets: [
-                    {
-                      label: "Attacks",
-                      data: [cowrie.length, dionaea.length], // กรณีที่ใช้ข้อมูล cowrie
-                      fill: false,
-                      backgroundColor: getRandomColors(2), // กำหนดสี
-                    },
-                  ],
-                }}
-              />
-            </Grid>
-
-            <Doughnut
-              cowrie_atk={cowrie.length}
-              dionaea_atk={dionaea.length}
-              country={topCountry}
-              honeypot={honeypot}
-              port={topPort}
-              username={topUsername}
-            />
-
-            <Grid container className={scss.forChart2}>
-              <Grid item xs={12}>
                 <BarChart
-                  header="Top Username"
+                  header="Honeypot Attacks Bar"
                   chartData={{
-                    labels: topUser.map((i) => i.username),
+                    labels: ["cowrie", "dionaea"], // กำหนด labels
                     datasets: [
                       {
                         label: "Attacks",
-                        data: topUser.map((i) => i.count), // ตัวอย่างกราฟที่ 1
+                        data: [cowrie.length, dionaea.length], // กรณีที่ใช้ข้อมูล cowrie
                         fill: false,
-                        backgroundColor: getRandomColors(8),
+                        backgroundColor: getRandomColors(2), // กำหนดสี
                       },
                     ],
                   }}
                 />
               </Grid>
-              <Grid item xs={12}>
-                <BarChart
-                  header="Top Password"
-                  chartData={{
-                    labels: topPass.map((i) => i.password), // กรณีข้อมูล honeypot ที่ต่างกัน
-                    datasets: [
-                      {
-                        label: "Attacks",
-                        data: topPass.map((i) => i.count), // ตัวอย่างกราฟที่ 2
-                        fill: false,
-                        backgroundColor: getRandomColors(8),
-                      },
-                    ],
-                  }}
-                />
+
+              <Doughnut
+                cowrie_atk={cowrie.length}
+                dionaea_atk={dionaea.length}
+                country={topCountry}
+                attacks={attacks}
+                port={topPort}
+                username={topUsername}
+              />
+
+              <Grid container className={scss.forChart2}>
+                <Grid item xs={12}>
+                  <BarChart
+                    header="Top Username"
+                    chartData={{
+                      labels: topUser.map((i) => i.username),
+                      datasets: [
+                        {
+                          label: "Attacks",
+                          data: topUser.map((i) => i.count), // ตัวอย่างกราฟที่ 1
+                          fill: false,
+                          backgroundColor: getRandomColors(8),
+                        },
+                      ],
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <BarChart
+                    header="Top Password"
+                    chartData={{
+                      labels: topPass.map((i) => i.password), // กรณีข้อมูล honeypot ที่ต่างกัน
+                      datasets: [
+                        {
+                          label: "Attacks",
+                          data: topPass.map((i) => i.count), // ตัวอย่างกราฟที่ 2
+                          fill: false,
+                          backgroundColor: getRandomColors(8),
+                        },
+                      ],
+                    }}
+                  />
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-          {/* <Grid container gap={2} className={scss.topCardsContainer}>
+
+            <Paper>{honeypots.map((i) => i.user.name)}</Paper>
+            {/* <Grid container gap={2} className={scss.topCardsContainer}>
                     <Grid>
                         <Paper className={scss.dataCard}>xs=4</Paper>
                     </Grid>
@@ -200,9 +206,9 @@ const Dashboard = () => {
                 <Grid xs={12} marginY={2}>
                     <Paper className={scss.dataCard}>xs=8</Paper>
                 </Grid> */}
-        </Box>
-      </div>
-    </ThemeProvider>
+          </Box>
+        </div>
+      </ThemeProvider>
     )
   );
 };

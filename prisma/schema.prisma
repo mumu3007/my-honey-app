@@ -28,6 +28,7 @@ model User {
   image     String?
   emailVerified DateTime?
   accounts      Account[]
+  honeypots     Honeypots[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -51,7 +52,15 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-model Honeypot {
+model Honeypots {
+  id      Int      @id @default(autoincrement())
+  name    String
+  status  String
+  user    User @relation(fields: [userId], references: [id])
+  userId  Int
+}
+
+model Attacks {
   id           Int      @id @default(autoincrement())
   name        String
   alert       String

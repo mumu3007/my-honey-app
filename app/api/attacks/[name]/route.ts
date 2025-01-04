@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: { name: string } }
 ) {
     const honeypotName = params.name
-    const post = await prisma.honeypot.findMany({
+    const post = await prisma.attacks.findMany({
         where:{
             name: honeypotName
         }
