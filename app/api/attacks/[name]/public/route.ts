@@ -8,13 +8,13 @@ export async function GET(
 ) {
     const honeypotName = params.name
     const attacks = await prisma.attacks.findMany({
-        where:{
-            name: honeypotName,
-            honeypots: {
-                status: "public", // กรองจาก status ของ Honeypots
-            },
+      where:{
+        name: honeypotName,
+        honeypots: {
+          status: "public", // กรองจาก status ของ Honeypots
         },
-        include: {
+      },
+      include: {
         honeypots: {
           include: {
             user: true, // ดึงข้อมูลของ user จาก Honeypots

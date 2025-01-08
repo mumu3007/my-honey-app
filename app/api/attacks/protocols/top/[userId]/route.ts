@@ -18,7 +18,10 @@ export async function GET(
         },
         include: {
             honeypots: true, // ดึงข้อมูล Honeypots ด้วยถ้าต้องการ
-        },
+        },orderBy: {
+        count: 'desc',
+      },
+      take: 5,
     })
     return Response.json(protocol)
 }

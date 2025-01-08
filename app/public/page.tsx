@@ -60,22 +60,14 @@ export default function Public() {
     const fetchPosts = async (userId: number) => {
       try {
         const getAttacks = await axios.get("/api/attacks");
-        const getCowrie = await axios.get(`/api/attacks/cowrie/${userId}`);
-        const getDionaea = await axios.get(`/api/attacks/dionaea/${userId}`);
-        const getTop = await axios.get(`/api/attacks/protocols/top/${userId}`);
-        const getTopUser = await axios.get(
-          `/api/attacks/username/top/${userId}`
-        );
-        const getTopUsername = await axios.get(
-          `/api/attacks/username/top5/${userId}`
-        );
-        const getTopPort = await axios.get(`/api/attacks/port/top5/${userId}`);
-        const getTopPass = await axios.get(
-          `/api/attacks/password/top/${userId}`
-        );
-        const getTopCountry = await axios.get(
-          `/api/attacks/country/top/${userId}`
-        );
+        const getCowrie = await axios.get(`/api/attacks/cowrie/public`);
+        const getDionaea = await axios.get(`/api/attacks/dionaea/public`);
+        const getTop = await axios.get(`/api/attacks/protocols/top/public`);
+        const getTopUser = await axios.get(`/api/attacks/username/top/public`);
+        const getTopUsername = await axios.get(`/api/attacks/username/top5/public`);
+        const getTopPort = await axios.get(`/api/attacks/port/top5/public`);
+        const getTopPass = await axios.get(`/api/attacks/password/top/public`);
+        const getTopCountry = await axios.get(`/api/attacks/country/top/public`);
         const getHoneypots = await axios.get("/api/honeypots");
 
         setAttacks(getAttacks.data);
@@ -89,7 +81,7 @@ export default function Public() {
         setTopCountry(getTopCountry.data);
         setHoneypots(getHoneypots.data);
 
-        console.log(getHoneypots.data);
+        console.log(getTopUser.data);
         console.log("fetch Work!!!");
       } catch (error) {
         console.error(error);
@@ -180,7 +172,7 @@ export default function Public() {
                       datasets: [
                         {
                           label: "Attacks",
-                          data: topUser.map((i) => i.count), // ตัวอย่างกราฟที่ 1
+                          data: topUser.map((i) => i._sum.count), // ตัวอย่างกราฟที่ 1
                           fill: false,
                           backgroundColor: getRandomColors(8),
                         },
@@ -196,7 +188,7 @@ export default function Public() {
                       datasets: [
                         {
                           label: "Attacks",
-                          data: topPass.map((i) => i.count), // ตัวอย่างกราฟที่ 2
+                          data: topPass.map((i) => i._sum.count), // ตัวอย่างกราฟที่ 2
                           fill: false,
                           backgroundColor: getRandomColors(8),
                         },

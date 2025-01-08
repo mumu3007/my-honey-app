@@ -2,18 +2,23 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function GET(req: Request, { params }: { params: { userId: number } }) {
-    const userId = params.userId
+export async function GET() {
   try {
-    const topPassword = await prisma.password.findMany({
-      orderBy: {
-        count: 'desc',
+    const topPassword = await prisma.password.groupBy({
+      by: ['password'],
+      _sum: {
+        count: true,
       },
       where:{
             honeypots: {
-                userId: Number(userId) // กรองจาก status ของ Honeypots
+                status: "public" // กรองจาก status ของ Honeypots
             },
         },
+      orderBy: {
+        _sum: {
+          count: 'desc',
+        },
+      },
       take: 8,
     });
 
