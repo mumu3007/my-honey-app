@@ -24,7 +24,7 @@ const darkTheme = createTheme({
   },
 });
 
-const Dashboard = () => {
+export default function Dashboard() {
   const { data: session, status } = useSession();
   // const sessionData = getSession();
   // console.log("sessionData", sessionData);
@@ -52,7 +52,9 @@ const Dashboard = () => {
         // ถ้า session มีการเข้าใช้งานแล้ว ให้โหลดข้อมูลจาก API
         fetchPosts(sessionData!.user.id);
       } else {
-        router.push("/"); // ถ้าไม่ได้ล็อกอินจะไปหน้า login
+        if (status === "unauthenticated") {
+          router.push("/");
+        }// ถ้าไม่ได้ล็อกอินจะไปหน้า login
       }
     }
 
@@ -221,5 +223,3 @@ const Dashboard = () => {
     )
   );
 };
-
-export default Dashboard;

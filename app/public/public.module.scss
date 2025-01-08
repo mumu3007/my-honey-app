@@ -1,0 +1,52 @@
+.topCardsContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+
+    @media screen and (min-width: 768px){
+        grid-template-columns: 1fr 1fr 1fr;
+        
+    }
+}
+
+.dataRibbon {
+    display: grid;
+    text-align: center;
+    grid-template-columns: 1fr ;
+    padding-bottom: 1rem;
+
+    @media screen and (min-width: 900px) {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.dataCard {
+    padding: 20px;
+}
+
+.table {
+    font-size: 45px;
+}
+
+.forChart {
+    display: grid;
+    text-align: center;
+    grid-template-columns: 1fr;
+    padding-bottom: 0rem;
+    gap: 1rem;
+
+    @media screen and (min-width: 900px) {
+        grid-template-columns: 1fr 1fr 1fr ;
+    }
+}
+
+.forChart2 {
+    display: grid;
+    text-align: center;
+    grid-template-columns: 1fr;
+    padding-bottom: 0rem;
+    gap: 1rem;
+
+    @media screen and (min-width: 900px) {
+        grid-template-columns: 1fr 1fr;
+    }
+}

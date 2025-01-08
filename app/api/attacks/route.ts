@@ -44,13 +44,14 @@ export async function POST(req: Request) {
 
     const existingProtocol = await prisma.protocol.findFirst({
       where: {
-        name: protocol
+        name: protocol,
+        honeypotId: honeypotId
       },
     });
 
     if (existingProtocol) {
       await prisma.protocol.update({
-        where: { id: existingProtocol.id },
+        where: { id: existingProtocol.id, honeypotId: honeypotId },
         data: { count: existingProtocol.count + 1 },
       });
     } else {
@@ -58,19 +59,21 @@ export async function POST(req: Request) {
         data: {
           name: protocol,
           count: 1,
+          honeypotId: honeypotId
         },
       });
     }
 
     const existingUsername = await prisma.username.findFirst({
       where: {
-        username: username
+        username: username,
+        honeypotId: honeypotId
       },
     });
 
     if (existingUsername) {
       await prisma.username.update({
-        where: { id: existingUsername.id },
+        where: { id: existingUsername.id, honeypotId: honeypotId },
         data: { count: existingUsername.count + 1 },
       });
     } else {
@@ -78,19 +81,21 @@ export async function POST(req: Request) {
         data: {
           username: username,
           count: 1,
+          honeypotId: honeypotId
         },
       });
     }
 
     const existingPassword = await prisma.password.findFirst({
       where: {
-        password: password
+        password: password,
+        honeypotId: honeypotId
       },
     });
 
     if (existingPassword) {
       await prisma.password.update({
-        where: { id: existingPassword.id },
+        where: { id: existingPassword.id, honeypotId: honeypotId },
         data: { count: existingPassword.count + 1 },
       });
     } else {
@@ -98,6 +103,7 @@ export async function POST(req: Request) {
         data: {
           password: password,
           count: 1,
+          honeypotId: honeypotId
         },
       });
     }
@@ -106,13 +112,14 @@ export async function POST(req: Request) {
     const countryData = await countryResponse.json();
     const existingIP = await prisma.country.findFirst({
       where: {
-        ip_attacker: ip_attacker
+        ip_attacker: ip_attacker,
+        honeypotId: honeypotId
       },
     });
 
     if (existingIP) {
       await prisma.country.update({
-        where: { id: existingIP.id },
+        where: { id: existingIP.id, honeypotId: honeypotId },
         data: { count: existingIP.count + 1 },
       });
     } else {
@@ -122,19 +129,21 @@ export async function POST(req: Request) {
           country: countryData.country,
           countryCode: countryData.countryCode,
           count: 1,
+          honeypotId: honeypotId
         },
       });
     }
 
     const existingPort = await prisma.port.findFirst({
       where: {
-        destinationPort: destinationPort
+        destinationPort: destinationPort,
+        honeypotId: honeypotId
       },
     });
 
     if (existingPort) {
       await prisma.port.update({
-        where: { id: existingPort.id },
+        where: { id: existingPort.id, honeypotId: honeypotId },
         data: { count: existingPort.count + 1 },
       });
     } else {
@@ -142,6 +151,7 @@ export async function POST(req: Request) {
         data: {
           destinationPort: destinationPort,
           count: 1,
+          honeypotId: honeypotId
         },
       });
     }
