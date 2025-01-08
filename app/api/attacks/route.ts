@@ -4,13 +4,30 @@ import { getServerSession } from 'next-auth'
 const prisma = new PrismaClient()
 
 export async function GET() {
-  return Response.json(await prisma.attacks.findMany())
+   try {
+    // ดึงข้อมูล Honeypots พร้อมกับข้อมูลของ User
+    const attacksWithHoneypots = await prisma.attacks.findMany({
+      include: {
+        honeypots: {
+          include: {
+            user: true, // ดึงข้อมูลของ user จาก Honeypots
+          },
+        },
+      },
+    })
+
+    return Response.json(attacksWithHoneypots)
+  } catch (error) {
+    return new Response(error as BodyInit, {
+      status: 500,
+    })
+  }
 }
 
 export async function POST(req: Request) {
   try {
     const { name, alert, ip_attacker,protocol,
-            comment, username, password, destinationPort } = await req.json()
+            comment, username, password, destinationPort, honeypotId } = await req.json()
     const newAttacks = await prisma.attacks.create({
       data: {
         name, 
@@ -20,7 +37,8 @@ export async function POST(req: Request) {
         comment, 
         username, 
         password,
-        destinationPort
+        destinationPort,
+        honeypotId
       },
     })
 

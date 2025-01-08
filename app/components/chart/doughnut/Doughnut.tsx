@@ -70,6 +70,34 @@ export default function Doughnut(props: DoughnutProps) {
     ],
   };
 
+  const optionsDoughnut2 = {
+    responsive: true,
+    cutout: "65%", // ปรับช่องตรงกลาง (ค่าคือเปอร์เซ็นต์ของเส้นผ่านศูนย์กลาง)
+    plugins: {
+      legend: {
+        position: "right" as "right", // เปลี่ยนตำแหน่ง Labels ("top", "left", "right", "bottom")
+        display: true,
+        labels: {
+          color: "#ffffff",
+          usePointStyle: true, // ใช้สัญลักษณ์แบบวงกลม
+          pointStyle: "circle", // ระบุให้เป็นวงกลม
+          boxWidth: 7, // ขนาดของวงกลม (ค่าเริ่มต้นคือ 40)
+          boxHeight: 7, // ความสูงของวงกลม
+        },
+      },
+      tooltip: {
+        callbacks: {
+          // สำหรับ title ใน tooltip ให้แสดงชื่อเต็มๆ
+          title: function (context: any) {
+            // ใช้ข้อมูลจาก labels แบบเต็มๆ
+            const dataIndex = context[0].dataIndex;
+            return country[dataIndex].country;
+          },
+        },
+      },
+    },
+  };
+
   const doughnutChartData3 = {
     labels: port.map((i) => i.destinationPort),
     datasets: [
@@ -114,7 +142,7 @@ export default function Doughnut(props: DoughnutProps) {
           <DataChart
             type={"doughnut"}
             data={doughnutChartData2}
-            options={optionsDoughnut}
+            options={optionsDoughnut2}
           />
         </Paper>
       </Grid>

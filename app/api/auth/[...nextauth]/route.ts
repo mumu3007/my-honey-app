@@ -4,8 +4,13 @@ import GoogleProvider from "next-auth/providers/google";
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcrypt'
 import { PrismaAdapter } from '@auth/prisma-adapter'
+import { DefaultJWT } from 'next-auth/jwt';
 
 const prisma = new PrismaClient()
+
+// export interface CustomJWT extends DefaultJWT {
+//   id?: string | number;
+// }
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -57,24 +62,22 @@ export const authOptions: AuthOptions = {
   callbacks: {
     jwt: async ({ token, user }) => {
       if (user) {
-        token.id = user.id // Store user id in the token
+        console.log('User data in JWT:', user);
+        token.id = Number(user.id)  // Store user id in the token
+        token.name = user.name; // เก็บชื่อใหม่ใน token
+        token.email = user.email; // เก็บอีเมลใหม่ใน token
+        token.picture = user.image;
       }
-
-      const dbUser = await prisma.user.findUnique({
-      where: { id: token.id as number },
-    });
-
-    if (dbUser) {
-      token.name = dbUser.name; // เก็บชื่อใหม่ใน token
-      token.email = dbUser.email; // เก็บอีเมลใหม่ใน token
-      token.picture = dbUser.image; // อัปเดตโปรไฟล์รูปภาพ
-    }
+      else{
+        console.log('NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',);
+      }
 
       return token
     },
     session: async ({ session, token }) => {
       if (session.user) {
-        session.user.id = token.id as number // Include user id in the session
+         console.log('Token data in session:', token); 
+        session.user.id = Number(token.id) // Include user id in the session
         session.user.name = token.name! || ""; // ใช้ข้อมูลที่อัปเดตใน session
         session.user.email = token.email! || "";
         session.user.image = token.picture // Include user id in the session

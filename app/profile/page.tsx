@@ -6,6 +6,7 @@ import { useEffect } from "react";
 
 export default function Profile() {
   const { data: session, status } = useSession();
+  console.log(session)
 
   const router = useRouter();
 
@@ -25,6 +26,7 @@ export default function Profile() {
             Welcome, <b>{session.user.name}!</b>
           </p>
           <p>Email: {session.user.email}</p>
+          <p>ID: {session.user.id}</p>
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
             className="w-full bg-blue-500 text-white py-2 rounded"

@@ -58,6 +58,12 @@ model Honeypots {
   status  String
   user    User @relation(fields: [userId], references: [id])
   userId  Int
+  attacks     Attacks[]
+  protocol    Protocol[]
+  country     Country[]
+  username    Username[]
+  password    Password[]
+  port        Port[]
 }
 
 model Attacks {
@@ -71,12 +77,16 @@ model Attacks {
   username    String
   password    String
   destinationPort String
+  honeypots    Honeypots @relation(fields: [honeypotId], references: [id])
+  honeypotId  Int
 }
 
 model Protocol {
   id      Int      @id @default(autoincrement())
   name    String
   count   Int
+  honeypots     Honeypots @relation(fields: [honeypotId], references: [id])
+  honeypotId    Int 
 }
 
 model Country {
@@ -85,22 +95,30 @@ model Country {
   country String
   countryCode String
   count   Int
+  honeypots     Honeypots @relation(fields: [honeypotId], references: [id])
+  honeypotId    Int
 }
 
 model Username {
   id      Int      @id @default(autoincrement())
   username    String
   count   Int
+  honeypots     Honeypots @relation(fields: [honeypotId], references: [id])
+  honeypotId    Int
 }
 
 model Password {
   id      Int      @id @default(autoincrement())
   password    String
   count   Int
+  honeypots     Honeypots @relation(fields: [honeypotId], references: [id])
+  honeypotId    Int 
 }
 
 model Port {
   id      Int      @id @default(autoincrement())
-  destinationPort    String
+  destinationPort  String
   count   Int
+  honeypots     Honeypots @relation(fields: [honeypotId], references: [id])
+  honeypotId    Int
 }

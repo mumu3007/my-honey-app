@@ -18,9 +18,10 @@ export const optionsDoughnut = {
         boxWidth: 7, // ขนาดของวงกลม (ค่าเริ่มต้นคือ 40)
         boxHeight: 7, // ความสูงของวงกลม
       }
-    }
+    },
   },
 };
+
 
 export const doughnutChartData3 = {
   labels: ["Red", "Blue", "Yellow"],

@@ -15,7 +15,7 @@ import { Username } from "../interfaces/username";
 import { Password } from "../interfaces/password";
 import { Country } from "../interfaces/country";
 import { Port } from "../interfaces/port";
-import { useSession } from "next-auth/react";
+import { useSession, getSession } from "next-auth/react";
 import { Honeypots } from "../interfaces/honeypots";
 
 const darkTheme = createTheme({
@@ -26,7 +26,8 @@ const darkTheme = createTheme({
 
 const Dashboard = () => {
   const { data: session, status } = useSession();
-  // console.log("session", session);
+  // const sessionData = getSession();
+  // console.log("sessionData", sessionData);
   // console.log("status", status);
   const router = useRouter();
   const [attacks, setAttacks] = useState<any>([]);
@@ -42,25 +43,33 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    console.log("UseEffect Worked!!!")
-    if (status === "unauthenticated") {
-      router.push("/");
-    } else {
-      fetchPosts();
+    console.log("UseEffect Worked!!!");
+    const fetchSession = async () => {
+      const sessionData = await getSession();
+      console.log("Session after refresh:", sessionData!.user);
+
+      if (sessionData) {
+        // ถ้า session มีการเข้าใช้งานแล้ว ให้โหลดข้อมูลจาก API
+        fetchPosts(sessionData!.user.id);
+      } else {
+        router.push("/"); // ถ้าไม่ได้ล็อกอินจะไปหน้า login
+      }
     }
+
+    fetchSession();
   }, [router, status]);
 
-  const fetchPosts = async () => {
+  const fetchPosts = async (userId: number) => {
     try {
       const getAttacks = await axios.get("/api/attacks");
-      const getCowrie = await axios.get("/api/attacks/cowrie");
-      const getDionaea = await axios.get("/api/attacks/dionaea");
-      const getTop = await axios.get("/api/attacks/protocols/top");
-      const getTopUser = await axios.get("/api/attacks/username/top");
-      const getTopUsername = await axios.get("/api/attacks/username/top5");
-      const getTopPort = await axios.get("/api/attacks/port/top5");
-      const getTopPass = await axios.get("/api/attacks/password/top");
-      const getTopCountry = await axios.get("/api/attacks/country/top");
+      const getCowrie = await axios.get(`/api/attacks/cowrie/${userId}`);
+      const getDionaea = await axios.get(`/api/attacks/dionaea/${userId}`);
+      const getTop = await axios.get(`/api/attacks/protocols/top/${userId}`);
+      const getTopUser = await axios.get(`/api/attacks/username/top/${userId}`);
+      const getTopUsername = await axios.get(`/api/attacks/username/top5/${userId}`);
+      const getTopPort = await axios.get(`/api/attacks/port/top5/${userId}`);
+      const getTopPass = await axios.get(`/api/attacks/password/top/${userId}`);
+      const getTopCountry = await axios.get(`/api/attacks/country/top/${userId}`);
       const getHoneypots = await axios.get("/api/honeypots")
 
       setAttacks(getAttacks.data);
