@@ -34,7 +34,7 @@ export async function POST(req: Request) {
         alert, 
         ip_attacker,
         protocol,
-        comment, 
+        comment: comment=="" ? "-":comment, 
         username, 
         password,
         destinationPort,

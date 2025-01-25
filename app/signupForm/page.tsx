@@ -1,0 +1,108 @@
+"use client";
+
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+
+export default function SignUp() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [image, setImage] = useState("");
+  const router = useRouter();
+
+  // const handleSubmit = async (e: any) => {
+  //   e.preventDefault();
+  //   try {
+  //     console.log("email", email);
+  //     console.log("password", password);
+  //     const result = await signIn("credentials", {
+  //       redirect: false,
+  //       email,
+  //       password,
+  //     });
+
+  //     if (result!.error) {
+  //       console.error(result!.error);
+  //     } else {
+  //       router.push("/dashboard");
+  //     }
+  //   } catch (error) {
+  //     console.log("error", error);
+  //   }
+  // };
+
+  const signUp = async (e: any) => {
+    e.preventDefault();
+    try {
+      console.log("email", email);
+      console.log("password", password);
+      const result = await axios.post("api/auth/signup", {
+        email: email,
+        name: name,
+        password: password,
+        image: image || "",
+      });
+      console.log(result);
+
+      if(result.data.newUser){
+        router.push("/dashboard")
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  return (
+    <div className="flex h-[88.5vh] items-center justify-center ">
+      <form
+        onSubmit={signUp}
+        className="w-1/3 bg-white p-6 rounded-md shadow-md"
+      >
+        <div className="mb-4">
+          <label htmlFor="name">Name</label>
+          <input
+            id="name"
+            type="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className="w-full border border-gray-300 px-3 py-2 rounded" // Added border
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full border border-gray-300 px-3 py-2 rounded" // Added border
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full border border-gray-300 px-3 py-2 rounded" // Added border
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white py-2 rounded mb-4"
+        >
+          Sign Up
+        </button>
+        <div className="w-full text-center underline">
+          <a href="/signinForm">Already have account?</a>
+        </div>
+      </form>
+    </div>
+  );
+}

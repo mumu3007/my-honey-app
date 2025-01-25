@@ -61,36 +61,45 @@ export default function Navbar() {
           <img src="/logo.png" alt="" className="w-12 h-12" />
           MyHoney
         </div>
-        <div className="flex w-[32%] gap-20 justify-between items-center">
-          <div className="w-1/3">
-            <button
-              onClick={() => router.push("/home")}
-              className="transition hover:scale-125 hover:font-medium duration-200"
-            >
-              Home
-            </button>
+        {status == "authenticated" && session.user && (
+          <div className="flex w-[40%] gap-20 justify-between items-center">
+            <div className="flex justify-center w-1/3">
+              <button
+                onClick={() => router.push("/realtime")}
+                className="transition hover:scale-110 hover:font-medium duration-200"
+              >
+                Realtime-Table
+              </button>
+            </div>
+            <div className="flex justify-center w-1/3">
+              <button
+                onClick={() => router.push("/public")}
+                className="transition hover:scale-110 hover:font-medium duration-200"
+              >
+                Public
+              </button>
+            </div>
+            <div className="flex justify-center w-1/3">
+              <button
+                onClick={() => router.push("/dashboard")}
+                className="transition hover:scale-110 hover:font-medium duration-200"
+              >
+                Dashboard
+              </button>
+            </div>
           </div>
-          <div className="w-1/3">
-            <button
-              onClick={() => router.push("/public")}
-              className="transition hover:scale-125 hover:font-medium duration-200"
-            >
-              Public
-            </button>
-          </div>
-          <div className="w-1/3">
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="transition hover:scale-125 hover:font-medium duration-200"
-            >
-              Dashboard
-            </button>
-          </div>
-        </div>
+        )}
         <div className="flex gap-4 items-center">
-          <div>
-            Hi,<span className="ml-1">{session?.user.name}</span>
-          </div>
+          {status == "authenticated" && session.user ? (
+            <div>
+              Hi,<span className="ml-1">{session?.user.name}</span>
+            </div>
+          ) : (
+            <div>
+              Hi, Please Sign in
+            </div>
+          )}
+
           <div className="relative">
             {session?.user.image ? (
               <img
