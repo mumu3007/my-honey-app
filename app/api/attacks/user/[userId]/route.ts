@@ -20,6 +20,9 @@ export async function GET(
         include: {
             honeypots: true, // ดึงข้อมูล Honeypots ด้วยถ้าต้องการ
         },
+        orderBy: {
+        id: 'asc', // เรียงตาม id จากน้อยไปมาก
+    },
     })
     return Response.json(attacks)
 }

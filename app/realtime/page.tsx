@@ -7,6 +7,7 @@ import { Card, createTheme, ThemeProvider, Typography } from "@mui/material";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 import axios from "axios";
 
@@ -20,56 +21,74 @@ export default function Realtime() {
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
   const [attacks, setAttacks] = useState<any[]>([]);
-   const [currentPage, setCurrentPage] = useState(1);
+  const [sortDown, setSortDown] = useState(true);
+  const [sortColumn, setSortColumn] = useState<string>("Date"); // คอลัมน์เริ่มต้น
+  const [currentPage, setCurrentPage] = useState(1);
 
   const router = useRouter();
 
   const TABS = [
-    {
-      label: "All",
-      value: "all",
-    },
-    {
-      label: "Cowrie",
-      value: "cowrie",
-    },
-    {
-      label: "Dionaea",
-      value: "dionaea",
-    },
+    { label: "All", value: "all" },
+    { label: "Cowrie", value: "cowrie" },
+    { label: "Dionaea", value: "dionaea" },
   ];
 
-  const TABLE_HEAD = ["No." ,"Honeypot", "Alert", "Date", "Time", "IP_Attacker", "Protocol", "Comment", "Username", "Password", "DestinationPort"];
+  const TABLE_HEAD = [
+    { label: "No.", key: "index" },
+    { label: "Honeypot", key: "name" },
+    { label: "Alert", key: "alert" },
+    { label: "Date", key: "createdAt" },
+    { label: "Time", key: "createdAtTime" },
+    { label: "IP_Attacker", key: "ip_attacker" },
+    { label: "Protocol", key: "protocol" },
+    { label: "Username", key: "username" },
+    { label: "Password", key: "password" },
+    { label: "Dest.Port", key: "destinationPort" },
+    { label: "Comment", key: "comment" },
+  ];
 
-  const rowsPerPage = 5;
+  const sortData = (data: any, column: any, isDescending: any) => {
+    return [...data].sort((a, b) => {
+      if (column === "createdAt") {
+        const dateA = new Date(a[column]).getTime();
+        const dateB = new Date(b[column]).getTime();
+        return isDescending ? dateB - dateA : dateA - dateB;
+      }
+      if (column === "destinationPort") {
+        return isDescending ? b[column] - a[column] : a[column] - b[column];
+      }
+      const valA = a[column]?.toString().toLowerCase();
+      const valB = b[column]?.toString().toLowerCase();
+      if (valA < valB) return isDescending ? 1 : -1;
+      if (valA > valB) return isDescending ? -1 : 1;
+      return 0;
+    });
+  };
+
+
+  const rowsPerPage = 6;
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
-  const visibleRows = attacks.slice(startIndex, endIndex);
+
+  const visibleRows = sortData(attacks, sortColumn, sortDown).slice(
+    startIndex,
+    endIndex
+  );
 
   const formatDate = (date: any) => {
-    console.log(date)
-        if (date && date.includes('T') && date.includes('.')) {
-            const formatedDate = date.split('T')[0];
-            const formatedTime = date.split("T")[1].split(".")[0];
-
-            const dateAndTime = [formatedDate, formatedTime];
-            // รวมวันที่และเวลา
-            return dateAndTime;
-        }
-        return date; // คืนค่าค่าว่างหาก date ไม่มีรูปแบบที่คาดหวัง
-    };
+    if (date && date.includes("T") && date.includes(".")) {
+      const formatedDate = date.split("T")[0];
+      const formatedTime = date.split("T")[1].split(".")[0];
+      return [formatedDate, formatedTime];
+    }
+    return date;
+  };
 
   const fetchAttacks = async (userId: number) => {
     try {
       const getAttacks = await axios.get(`/api/attacks/user/${userId}`);
-      // const getCowrie = await axios.get(`/api/attacks/cowrie/${userId}`);
-      // const getDionaea = await axios.get(`/api/attacks/dionaea/${userId}`);
-
       setAttacks(getAttacks.data);
-      // setCowrie(getCowrie.data);
-      // setDionaea(getDionaea.data);
       console.log(getAttacks.data);
-
     } catch (error) {
       console.error(error);
     } finally {
@@ -77,149 +96,161 @@ export default function Realtime() {
     }
   };
 
- useEffect(() => {
-     console.log("UseEffect Worked!!!");
-     const fetchSession = async () => {
-       const sessionData = await getSession();
-       console.log("Session after refresh:", sessionData!.user);
- 
-       if (sessionData) {
-         // ถ้า session มีการเข้าใช้งานแล้ว ให้โหลดข้อมูลจาก API
-         fetchAttacks(sessionData!.user.id);
-       } else {
-         if (status === "unauthenticated") {
-           router.push("/");
-         }// ถ้าไม่ได้ล็อกอินจะไปหน้า login
-       }
-     }
- 
-     fetchSession();
-   }, [router, status]);
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout | null = null;
 
-  // When after loading success and have session, show profile
+    const fetchSessionAndData = async () => {
+      const sessionData = await getSession();
+      if (sessionData) {
+        fetchAttacks(sessionData!.user.id);
+
+        // ดึงข้อมูลซ้ำทุก 5 วินาที
+        intervalId = setInterval(() => {
+          fetchAttacks(sessionData!.user.id);
+        }, 5000);
+      } else if (status === "unauthenticated") {
+        router.push("/");
+      }
+    };
+
+    fetchSessionAndData();
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId); // Cleanup interval เมื่อ component ถูก unmount
+      }
+    };
+  }, [router, status]);
+
   return (
     status === "authenticated" &&
     session.user && (
       <ThemeProvider theme={darkTheme}>
-        <div className="flex flex-col justify-center p-10">
-          <div className="text-center p-5 text-xl text-white">
-            Realtime Table
+        {loading ? (
+          <div className="flex h-[39rem] items-center justify-center">
+            <div className="text-2xl font-light text-white">
+              Just a Moment...
+            </div>
           </div>
-          <div className="flex justify-center">
-            <Card className="h-full w-[90%] overflow-hidden bg-[#171d28]  border-[2px] border-gray-900">
-              <table className="w-full min-w-max table-auto text-left ">
-                <thead>
-                  <tr>
-                    {TABLE_HEAD.map((head) => (
-                      <th
-                        key={head}
-                        className="border-b-[2px] border-gray-900 bg-gray-900 p-4 "
-                      >
-                        <div className="flex items-center">
-                          <Typography className="font-semibold">
-                            {head}
-                          </Typography>
-                          {head === "Date" && (
-                            <button
-                              onClick={() =>
-                                console.log("Button clicked for Date")
-                              }
-                              className="text-xs text-white  px-1"
-                            >
-                              <KeyboardArrowDownIcon />
-                            </button>
-                          )}
-                        </div>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="w-full #232933">
-                  {visibleRows.map(
-                    (
-                      {
-                        id,
-                        name,
-                        alert,
-                        createdAt,
-                        ip_attacker,
-                        protocol,
-                        comment,
-                        username,
-                        password,
-                        destinationPort,
-                      },
-                      index
-                    ) => {
-                      const isLast = index === attacks.length - 1;
-                      const classes = isLast
-                        ? "p-4"
-                        : "p-4 border-b border-gray-900";
-
+        ) : (
+          <div className="flex flex-col justify-center p-10 pt-8 pb-0">
+            <div className="font-semibold text-center p-5 text-2xl text-white">
+              Realtime Table
+            </div>
+            <div className="flex justify-center">
+              <Card className="h-full w-[95%] overflow-x-scroll  scrollbar scrollbar-thumb-gray-600 scrollbar-track-gray-800 bg-[#171d28]  border-[2px] border-gray-900">
+                <table className="w-full min-w-max table-auto text-left ">
+                  <thead>
+                    <tr>
+                      {TABLE_HEAD.map(({ label, key }) => (
+                        <th
+                          key={key}
+                          className="border-b-[2px] bg-gray-900 p-4 border-r border-gray-700"
+                        >
+                          <div className="flex items-center">
+                            <Typography className="font-semibold">
+                              {label}
+                            </Typography>
+                            {key !== "index" && (
+                              <button
+                                onClick={() => {
+                                  if (sortColumn === key) {
+                                    setSortDown(!sortDown);
+                                  } else {
+                                    setSortColumn(key);
+                                    setSortDown(true); // Default sort direction
+                                  }
+                                }}
+                                className="text-xs text-white px-1"
+                              >
+                                {sortColumn === key ? (
+                                  sortDown ? (
+                                    <KeyboardArrowDownIcon />
+                                  ) : (
+                                    <KeyboardArrowUpIcon />
+                                  )
+                                ) : (
+                                  <KeyboardArrowDownIcon className="opacity-50" />
+                                )}
+                              </button>
+                            )}
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="w-full bg-[#232933]">
+                    {visibleRows.map((row, index) => {
+                      const { createdAt, createdAtTime, ...rest } = row;
                       return (
-                        <tr key={id}>
-                          <td className={classes}>
-                            <Typography>{index + startIndex + 1}</Typography>
-                          </td>
-                          <td className={classes}>
-                            <Typography>{name}</Typography>
-                          </td>
-                          <td className={classes}>
-                            <Typography>{alert}</Typography>
-                          </td>
-                          <td className={classes}>
-                            <Typography>{formatDate(createdAt)[0]}</Typography>
-                          </td>
-                          <td className={classes}>
-                            <Typography>{formatDate(createdAt)[1]}</Typography>
-                          </td>
-                          <td className={classes}>
-                            <Typography>{ip_attacker}</Typography>
-                          </td>
-                          <td className={classes}>
-                            <Typography>{protocol}</Typography>
-                          </td>
-                          <td className={classes}>
-                            <Typography>{comment}</Typography>
-                          </td>
-                          <td className={classes}>
-                            <Typography>{username}</Typography>
-                          </td>
-                          <td className={classes}>
-                            <Typography>{password}</Typography>
-                          </td>
-                          <td className={classes}>
-                            <Typography>{destinationPort}</Typography>
-                          </td>
+                        <tr key={row.id}>
+                          {TABLE_HEAD.map(({ key }, i) => (
+                            <td
+                              key={i}
+                              className={`p-4 ${
+                                i < TABLE_HEAD.length - 1
+                                  ? "border-r border-gray-700"
+                                  : ""
+                              }`}
+                              style={{
+                                whiteSpace:
+                                  key === "comment" ? "nowrap" : "normal", // ไม่ให้ข้อมูลใน comment ขึ้นบรรทัดใหม่
+                                overflow:
+                                  key === "comment" ? "hidden" : "visible", // ซ่อนข้อมูลที่เกิน
+                                textOverflow:
+                                  key === "comment" ? "ellipsis" : "clip", // เพิ่ม "..." เมื่อข้อมูลเกิน
+                                maxWidth: key === "comment" ? "400px" : "auto", // กำหนดความกว้างสูงสุด
+                              }}
+                            >
+                              <Typography
+                                title={
+                                  key === "comment" ? rest[key] : undefined
+                                } // แสดง tooltip เมื่อ hover
+                              >
+                                {key === "index"
+                                  ? index + startIndex + 1
+                                  : key === "createdAt"
+                                  ? formatDate(createdAt)[0]
+                                  : key === "createdAtTime"
+                                  ? formatDate(createdAt)[1]
+                                  : key === "comment"
+                                  ? rest[key].length > 40
+                                    ? `${rest[key].slice(0, 40)}...`
+                                    : rest[key]
+                                  : rest[key]}
+                              </Typography>
+                            </td>
+                          ))}
                         </tr>
                       );
-                    }
-                  )}
-                </tbody>
-              </table>
-            </Card>
-          </div>
+                    })}
+                  </tbody>
+                </table>
+              </Card>
+            </div>
 
-          <div className="flex justify-center w-full ">
-            <button
-              onClick={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="w-10"
-            >
-              <KeyboardArrowLeftIcon />
-            </button>
-            <span className="">{currentPage}</span>
-            <button
-              onClick={() => setCurrentPage(currentPage + 1)}
-              disabled={endIndex >= attacks.length}
-              className="w-10"
-            >
-              <KeyboardArrowRightIcon />
-            </button>
+            <div className="flex justify-center w-full pt-7 text-xl text-white">
+              <div className="bg-[#232933] rounded py-1">
+                <button
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="w-12"
+                >
+                  <KeyboardArrowLeftIcon />
+                </button>
+                <span className="">{currentPage}</span>
+                <button
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={endIndex >= attacks.length}
+                  className="w-12"
+                >
+                  <KeyboardArrowRightIcon />
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
       </ThemeProvider>
     )
   );
-  
 }

@@ -17,6 +17,7 @@ import { Country } from "../interfaces/country";
 import { Port } from "../interfaces/port";
 import { useSession, getSession } from "next-auth/react";
 import { Honeypots } from "../interfaces/honeypots";
+import { Attacks } from "../interfaces/attacks";
 
 const darkTheme = createTheme({
   palette: {
@@ -34,8 +35,8 @@ export default function Dashboard() {
 
   const [loading, setLoading] = useState(true);
   const [attacks, setAttacks] = useState<any>([]);
-  const [cowrie, setCowrie] = useState([]);
-  const [dionaea, setDionaea] = useState([]);
+  const [cowrie, setCowrie] = useState<Attacks[]>([]);
+  const [dionaea, setDionaea] = useState<Attacks[]>([]);
   const [top, setTop] = useState([]);
   const [topCountry, setTopCountry] = useState<Country[]>([]);
   const [topUser, setTopUser] = useState<Username[]>([]);
@@ -49,7 +50,6 @@ export default function Dashboard() {
     console.log("UseEffect Worked!!!");
     const fetchSession = async () => {
       const sessionData = await getSession();
-      console.log("Session after refresh:", sessionData!.user);
 
       if (sessionData) {
         // ถ้า session มีการเข้าใช้งานแล้ว ให้โหลดข้อมูลจาก API
@@ -88,7 +88,7 @@ export default function Dashboard() {
       setTopCountry(getTopCountry.data);
       setHoneypots(getHoneypots.data);
 
-      console.log(getHoneypots.data);
+      console.log(getCowrie.data);
        console.log("fetch Work!!!");
     } catch (error) {
       console.error(error);
@@ -176,10 +176,31 @@ export default function Dashboard() {
 
                 <Grid container className={scss.forChart}>
                   <HorizontalBar top={top} />
-                  <LineChart
-                    attacks={attacks}
-                    cowrie={cowrie}
-                    dionaea={dionaea}
+                  <BarChart
+                    header="Honeypot Attacks Bar"
+                    chartData={{
+                      labels: ["cowrie", "dionaea"], // กำหนด labels
+                      datasets: [
+                        {
+                          label: "Attacks",
+                          data: [
+                            cowrie.filter((i) => i.alert == "red").length,
+                            dionaea.filter((i) => i.alert == "red").length,
+                          ], // กรณีที่ใช้ข้อมูล cowrie
+                          fill: false,
+                          backgroundColor: ["#e57373"], // กำหนดสี
+                        },
+                        {
+                          label: "Attacks",
+                          data: [
+                            cowrie.filter((i) => i.alert == "yellow").length,
+                            dionaea.filter((i) => i.alert == "yellow").length,
+                          ], // กรณีที่ใช้ข้อมูล cowrie
+                          fill: false,
+                          backgroundColor: ["#ffff8d"], // กำหนดสี
+                        },
+                      ],
+                    }}
                   />
                   <BarChart
                     header="Honeypot Attacks Bar"

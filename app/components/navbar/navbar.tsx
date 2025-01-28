@@ -95,9 +95,7 @@ export default function Navbar() {
               Hi,<span className="ml-1">{session?.user.name}</span>
             </div>
           ) : (
-            <div>
-              Hi, Please Sign in
-            </div>
+            <div>Hi, Please Sign in</div>
           )}
 
           <div className="relative">
@@ -123,36 +121,39 @@ export default function Navbar() {
                 role="menu"
                 className="absolute right-0 z-10 min-w-[180px] overflow-auto rounded-lg border border-slate-200 bg-white p-1.5 shadow-lg shadow-sm"
               >
-                <li
-                  onClick={() => {
-                    closeMenu();
-                    router.push("/profile");
-                  }}
-                  role="menuitem"
-                  className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
-                >
-                  My Profile
-                </li>
-                <li
-                  role="menuitem"
-                  className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
-                >
-                  Settings
-                </li>
-                <li
-                  role="menuitem"
-                  className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
-                >
-                  Inbox
-                </li>
-                <hr className="my-2 border-slate-200" />
-                <li
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  role="menuitem"
-                  className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
-                >
-                  Sign Out
-                </li>
+                {status == "authenticated" && session.user ? (
+                  <>
+                    <li
+                      onClick={() => {
+                        closeMenu();
+                        router.push("/profile");
+                      }}
+                      role="menuitem"
+                      className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
+                    >
+                      My Profile
+                    </li>
+                    <hr className="my-2 border-slate-200" />
+                    <li
+                      onClick={() => signOut({ callbackUrl: "/" })}
+                      role="menuitem"
+                      className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
+                    >
+                      Sign Out
+                    </li>
+                  </>
+                ) : (
+                  <li
+                    onClick={() => {
+                      closeMenu()
+                      router.push("/signinForm")
+                    }}
+                    role="menuitem"
+                    className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
+                  >
+                    Sign In
+                  </li>
+                  )}
               </ul>
             )}
 

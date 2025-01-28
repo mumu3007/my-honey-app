@@ -8,12 +8,13 @@ export async function GET(
   req: Request,
   { params }: { params: { name: string, userId: number } }
 ) {
-    const honeypotName = params.name
-    const userId = params.userId
+    const { name, userId }= await params
+    // const honeypotName = params.name
+    // const userId = params.userId
 
     const attacks = await prisma.attacks.findMany({
         where:{
-            name: honeypotName,
+            name: name,
             honeypots: {
                 userId: Number(userId) // กรองจาก status ของ Honeypots
             },
