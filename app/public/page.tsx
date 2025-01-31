@@ -50,16 +50,31 @@ export default function Public() {
 
     const fetchPosts = async () => {
       try {
-        const getAttacks = await axios.get("/api/attacks");
-        const getCowrie = await axios.get(`/api/attacks/public/cowrie`);
-        const getDionaea = await axios.get(`/api/attacks/public/dionaea`);
-        const getTop = await axios.get(`/api/attacks/public/protocols/top`);
-        const getTopUser = await axios.get(`/api/attacks/public/username/top`);
-        const getTopUsername = await axios.get(`/api/attacks/public/username/top5`);
-        const getTopPort = await axios.get(`/api/attacks/public/port/top5`);
-        const getTopPass = await axios.get(`/api/attacks/public/password/top`);
-        const getTopCountry = await axios.get(`/api/attacks/public/country/top`);
-        const getAllCountry = await axios.get("/api/attacks/public/country");
+        console.time("AAA")
+        const [
+          getAttacks,
+          getCowrie,
+          getDionaea,
+          getTop,
+          getTopUser,
+          getTopUsername,
+          getTopPort,
+          getTopPass,
+          getTopCountry,
+          getAllCountry,
+        ] = await Promise.all([
+          axios.get("/api/attacks"),
+          axios.get(`/api/attacks/public/cowrie`),
+          axios.get(`/api/attacks/public/dionaea`),
+          axios.get(`/api/attacks/public/protocols/top`),
+          axios.get(`/api/attacks/public/username/top`),
+          axios.get(`/api/attacks/public/username/top5`),
+          axios.get(`/api/attacks/public/port/top5`),
+          axios.get(`/api/attacks/public/password/top`),
+          axios.get(`/api/attacks/public/country/top`),
+          axios.get("/api/attacks/public/country"),
+        ]);
+        console.timeEnd("AAA");
 
         setAttacks(getAttacks.data);
         setCowrie(getCowrie.data);
@@ -161,12 +176,12 @@ export default function Public() {
               <Grid container className={scss.forChart}>
                 <HorizontalBar top={top} />
                 <BarChart
-                  header="Honeypot Attacks Bar"
+                  header="Risk Level Bar"
                   chartData={{
                     labels: ["cowrie", "dionaea"], // กำหนด labels
                     datasets: [
                       {
-                        label: "Attacks",
+                        label: "Red",
                         data: [
                           cowrie.filter((i) => i.alert == "red").length,
                           dionaea.filter((i) => i.alert == "red").length,
@@ -175,7 +190,7 @@ export default function Public() {
                         backgroundColor: ["#e57373"], // กำหนดสี
                       },
                       {
-                        label: "Attacks",
+                        label: "Yellow",
                         data: [
                           cowrie.filter((i) => i.alert == "yellow").length,
                           dionaea.filter((i) => i.alert == "yellow").length,
@@ -185,6 +200,7 @@ export default function Public() {
                       },
                     ],
                   }}
+                  options={[true, "top"]}
                 />
                 <BarChart
                   header="Honeypot Attacks Bar"
@@ -199,17 +215,19 @@ export default function Public() {
                       },
                     ],
                   }}
+                  options={[false, "top"]}
                 />
               </Grid>
-
-              <Doughnut
-                cowrie_atk={cowrie.length}
-                dionaea_atk={dionaea.length}
-                country={topCountry}
-                attacks={attacks}
-                port={topPort}
-                username={topUsername}
-              />
+              <Grid container className={scss.bottomRow}>
+                <Doughnut
+                  cowrie_atk={cowrie.length}
+                  dionaea_atk={dionaea.length}
+                  country={topCountry}
+                  attacks={attacks}
+                  port={topPort}
+                  username={topUsername}
+                />
+              </Grid>
 
               <Grid container className={scss.forChart2}>
                 <Grid item xs={12}>
@@ -226,6 +244,7 @@ export default function Public() {
                         },
                       ],
                     }}
+                    options={[false, "top"]}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -242,6 +261,7 @@ export default function Public() {
                         },
                       ],
                     }}
+                    options={[false, "top"]}
                   />
                 </Grid>
               </Grid>

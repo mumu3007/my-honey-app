@@ -62,7 +62,7 @@ export default function HorizontalBar({ top }: { top: any[] }) {
 
   return (
     <Grid container gap={2} className={scss.wrapper}>
-      <Paper className="block justify-center px-4 py-2 w-full bg-[#171d28]  border-[2px] border-gray-900 md:flex">
+      <Paper className="block justify-center px-4 py-2 w-[calc(100%-0.1rem)] bg-[#171d28]  border-[2px] border-gray-900 md:flex">
         <div className={scss.chart}>
           <Typography>Honeypot Attacks Bar(Protocol)</Typography>
           <DataChart

@@ -8,11 +8,43 @@
     }
 }
 
+.formatChart {
+    display: grid;
+    text-align: center;
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+    
+        @media screen and (min-width: 900px) {
+            grid-template-columns: 1.6fr 2.6fr;
+        }
+}
+// .formatChart {
+//     display: grid;
+//         text-align: center;
+//         grid-template-columns: 1fr;
+//         padding-bottom: 1rem;
+//         gap: 1rem;
+    
+//         @media screen and (min-width: 900px) {
+//             grid-template-columns: 1.5fr 1fr;
+//         }
+// }
+
+.bottomRow {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+
+    @media screen and (min-width: 900px) {
+        grid-template-columns: 1fr 1fr ;
+    }
+}
+
 .dataRibbon {
     display: grid;
     text-align: center;
     grid-template-columns: 1fr ;
-    padding-bottom: 1rem;
+    padding-bottom: 0.6rem;
 
     @media screen and (min-width: 900px) {
         grid-template-columns: 1fr 1fr;
@@ -32,11 +64,20 @@
     text-align: center;
     grid-template-columns: 1fr;
     padding-bottom: 0rem;
-    gap: 1rem;
+    row-gap: 1rem;
 
-    @media screen and (min-width: 900px) {
-        grid-template-columns: 1fr 1fr 1fr ;
+    @media screen and (min-width: 1200px) {
+        grid-template-columns: 1fr ;
     }
+}
+.forChartDough {
+    display: grid;
+        grid-template-columns: 1fr 1fr; // กำหนดให้มี 2 คอลัมน์เสมอ
+        justify-content: center;
+        gap: 0.5rem;
+        text-align: left;
+
+   
 }
 
 .forChart2 {

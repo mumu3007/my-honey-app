@@ -56,7 +56,7 @@ model Honeypots {
   id      Int      @id @default(autoincrement())
   name    String
   status  String
-  user    User @relation(fields: [userId], references: [id])
+  user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  Int
   attacks     Attacks[]
   protocol    Protocol[]
@@ -77,7 +77,7 @@ model Attacks {
   username    String
   password    String
   destinationPort String
-  honeypots    Honeypots @relation(fields: [honeypotId], references: [id])
+  honeypots    Honeypots @relation(fields: [honeypotId], references: [id], onDelete: Cascade)
   honeypotId  Int
 }
 
@@ -85,7 +85,7 @@ model Protocol {
   id      Int      @id @default(autoincrement())
   name    String
   count   Int
-  honeypots     Honeypots @relation(fields: [honeypotId], references: [id])
+  honeypots     Honeypots @relation(fields: [honeypotId], references: [id], onDelete: Cascade)
   honeypotId    Int 
 }
 
@@ -95,7 +95,7 @@ model Country {
   country String
   countryCode String
   count   Int
-  honeypots     Honeypots @relation(fields: [honeypotId], references: [id])
+  honeypots     Honeypots @relation(fields: [honeypotId], references: [id], onDelete: Cascade)
   honeypotId    Int
 }
 
@@ -103,7 +103,7 @@ model Username {
   id      Int      @id @default(autoincrement())
   username    String
   count   Int
-  honeypots     Honeypots @relation(fields: [honeypotId], references: [id])
+  honeypots     Honeypots @relation(fields: [honeypotId], references: [id], onDelete: Cascade)
   honeypotId    Int
 }
 
@@ -111,7 +111,7 @@ model Password {
   id      Int      @id @default(autoincrement())
   password    String
   count   Int
-  honeypots     Honeypots @relation(fields: [honeypotId], references: [id])
+  honeypots     Honeypots @relation(fields: [honeypotId], references: [id], onDelete: Cascade)
   honeypotId    Int 
 }
 
@@ -119,6 +119,6 @@ model Port {
   id      Int      @id @default(autoincrement())
   destinationPort  String
   count   Int
-  honeypots     Honeypots @relation(fields: [honeypotId], references: [id])
+  honeypots     Honeypots @relation(fields: [honeypotId], references: [id], onDelete: Cascade)
   honeypotId    Int
 }

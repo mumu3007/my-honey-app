@@ -8,7 +8,7 @@ import BarChart from "../components/chart/barChart/barChart";
 import { Box, Grid, Paper } from "@mui/material";
 import HorizontalBar from "../components/chart/horizontalBar/horizontalBar";
 import LineChart from "../components/chart/lineChart/lineChart";
-import scss from "./Dashboard.module.scss";
+import scss from "./dashboard.module.scss";
 import DataCard from "../components/chart/dataCard/dataCard";
 import Doughnut from "../components/chart/doughnut/doughnut";
 import { Username } from "../interfaces/username";
@@ -18,6 +18,7 @@ import { Port } from "../interfaces/port";
 import { useSession, getSession } from "next-auth/react";
 import { Honeypots } from "../interfaces/honeypots";
 import { Attacks } from "../interfaces/attacks";
+import GeoChart from "../components/chart/geoChart/geoChart";
 
 const darkTheme = createTheme({
   palette: {
@@ -44,7 +45,7 @@ export default function Dashboard() {
   const [topPort, setTopPort] = useState<Port[]>([]);
   const [topPass, setTopPass] = useState<Password[]>([]);
   const [honeypots, setHoneypots] = useState<Honeypots[]>([]);
-
+  const [allCountry, setAllCountry] = useState<Country[]>([]);
 
   useEffect(() => {
     console.log("UseEffect Worked!!!");
@@ -57,25 +58,39 @@ export default function Dashboard() {
       } else {
         if (status === "unauthenticated") {
           router.push("/");
-        }// ถ้าไม่ได้ล็อกอินจะไปหน้า login
+        } // ถ้าไม่ได้ล็อกอินจะไปหน้า login
       }
-    }
+    };
 
     fetchSession();
   }, [router, status]);
 
   const fetchPosts = async (userId: number) => {
     try {
-      const getAttacks = await axios.get("/api/attacks");
-      const getCowrie = await axios.get(`/api/attacks/cowrie/${userId}`);
-      const getDionaea = await axios.get(`/api/attacks/dionaea/${userId}`);
-      const getTop = await axios.get(`/api/attacks/protocols/top/${userId}`);
-      const getTopUser = await axios.get(`/api/attacks/username/top/${userId}`);
-      const getTopUsername = await axios.get(`/api/attacks/username/top5/${userId}`);
-      const getTopPort = await axios.get(`/api/attacks/port/top5/${userId}`);
-      const getTopPass = await axios.get(`/api/attacks/password/top/${userId}`);
-      const getTopCountry = await axios.get(`/api/attacks/country/top/${userId}`);
-      const getHoneypots = await axios.get("/api/honeypots")
+
+      const [
+        getAttacks,
+        getCowrie,
+        getDionaea,
+        getTop,
+        getTopUser,
+        getTopUsername,
+        getTopPort,
+        getTopPass,
+        getTopCountry,
+        getAllCountry,
+      ] = await Promise.all([
+          axios.get("/api/attacks"),
+          axios.get(`/api/attacks/cowrie/${userId}`),
+          axios.get(`/api/attacks/dionaea/${userId}`),
+          axios.get(`/api/attacks/protocols/top/${userId}`),
+          axios.get(`/api/attacks/username/top/${userId}`),
+          axios.get(`/api/attacks/username/top5/${userId}`),
+          axios.get(`/api/attacks/port/top5/${userId}`),
+          axios.get(`/api/attacks/password/top/${userId}`),
+          axios.get(`/api/attacks/country/top/${userId}`),
+          axios.get(`/api/attacks/country/${userId}`),
+      ]);
 
       setAttacks(getAttacks.data);
       setCowrie(getCowrie.data);
@@ -86,13 +101,14 @@ export default function Dashboard() {
       setTopPort(getTopPort.data);
       setTopPass(getTopPass.data);
       setTopCountry(getTopCountry.data);
-      setHoneypots(getHoneypots.data);
+      setAllCountry(getAllCountry.data);
 
       console.log(getCowrie.data);
-       console.log("fetch Work!!!");
+      console.log("fetch Work!!!");
     } catch (error) {
       console.error(error);
-    } finally {
+    } 
+    finally {
       setLoading(false);
     }
   };
@@ -157,7 +173,7 @@ export default function Dashboard() {
             <Box>
               {/* <div>{country?.country}</div> */}
               <Grid container gap={2} marginTop={0}>
-                <Grid container gap={5} className={scss.dataRibbon}>
+                <Grid container gap={1} className={scss.dataRibbon}>
                   <Grid>
                     <DataCard
                       title={"Cowrie-Attacks"}
@@ -174,58 +190,63 @@ export default function Dashboard() {
                   </Grid>
                 </Grid>
 
-                <Grid container className={scss.forChart}>
-                  <HorizontalBar top={top} />
-                  <BarChart
-                    header="Honeypot Attacks Bar"
-                    chartData={{
-                      labels: ["cowrie", "dionaea"], // กำหนด labels
-                      datasets: [
-                        {
-                          label: "Attacks",
-                          data: [
-                            cowrie.filter((i) => i.alert == "red").length,
-                            dionaea.filter((i) => i.alert == "red").length,
-                          ], // กรณีที่ใช้ข้อมูล cowrie
-                          fill: false,
-                          backgroundColor: ["#e57373"], // กำหนดสี
-                        },
-                        {
-                          label: "Attacks",
-                          data: [
-                            cowrie.filter((i) => i.alert == "yellow").length,
-                            dionaea.filter((i) => i.alert == "yellow").length,
-                          ], // กรณีที่ใช้ข้อมูล cowrie
-                          fill: false,
-                          backgroundColor: ["#ffff8d"], // กำหนดสี
-                        },
-                      ],
-                    }}
-                  />
-                  <BarChart
-                    header="Honeypot Attacks Bar"
-                    chartData={{
-                      labels: ["cowrie", "dionaea"], // กำหนด labels
-                      datasets: [
-                        {
-                          label: "Attacks",
-                          data: [cowrie.length, dionaea.length], // กรณีที่ใช้ข้อมูล cowrie
-                          fill: false,
-                          backgroundColor: getRandomColors(2), // กำหนดสี
-                        },
-                      ],
-                    }}
-                  />
+                <Grid container className={scss.formatChart}>
+                  <Grid container className={scss.forChart}>
+                    <HorizontalBar top={top} />
+                    <BarChart
+                      header="Risk Level Bar"
+                      chartData={{
+                        labels: ["cowrie", "dionaea"], // กำหนด labels
+                        datasets: [
+                          {
+                            label: "Red",
+                            data: [
+                              cowrie.filter((i) => i.alert == "red").length,
+                              dionaea.filter((i) => i.alert == "red").length,
+                            ], // กรณีที่ใช้ข้อมูล cowrie
+                            fill: false,
+                            backgroundColor: ["#e57373"], // กำหนดสี
+                          },
+                          {
+                            label: "Yellow",
+                            data: [
+                              cowrie.filter((i) => i.alert == "yellow").length,
+                              dionaea.filter((i) => i.alert == "yellow").length,
+                            ], // กรณีที่ใช้ข้อมูล cowrie
+                            fill: false,
+                            backgroundColor: ["#ffff8d"], // กำหนดสี
+                          },
+                        ],
+                      }}
+                      options={[true, "top"]}
+                    />
+                    <BarChart
+                      header="Honeypot Attacks Bar"
+                      chartData={{
+                        labels: ["cowrie", "dionaea"], // กำหนด labels
+                        datasets: [
+                          {
+                            label: "Attacks",
+                            data: [cowrie.length, dionaea.length], // กรณีที่ใช้ข้อมูล cowrie
+                            fill: false,
+                            backgroundColor: getRandomColors(2), // กำหนดสี
+                          },
+                        ],
+                      }}
+                      options={[false, "top"]}
+                    />
+                  </Grid>
+                  <Grid container className={scss.forChartDough}>
+                    <Doughnut
+                      cowrie_atk={cowrie.length}
+                      dionaea_atk={dionaea.length}
+                      country={topCountry}
+                      attacks={attacks}
+                      port={topPort}
+                      username={topUsername}
+                    />
+                  </Grid>
                 </Grid>
-
-                <Doughnut
-                  cowrie_atk={cowrie.length}
-                  dionaea_atk={dionaea.length}
-                  country={topCountry}
-                  attacks={attacks}
-                  port={topPort}
-                  username={topUsername}
-                />
 
                 <Grid container className={scss.forChart2}>
                   <Grid item xs={12}>
@@ -242,6 +263,7 @@ export default function Dashboard() {
                           },
                         ],
                       }}
+                      options={[false, "top"]}
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -258,9 +280,11 @@ export default function Dashboard() {
                           },
                         ],
                       }}
+                      options={[false, "top"]}
                     />
                   </Grid>
                 </Grid>
+                <GeoChart allCountry={allCountry} />
               </Grid>
 
               {/* <Paper>{honeypots.map((i) => i.user.name)}</Paper> */}
@@ -284,4 +308,4 @@ export default function Dashboard() {
       </ThemeProvider>
     )
   );
-};
+}

@@ -26,9 +26,10 @@ export type BarChart2Props = {
     }[];
   };
   header: string;
+  options: [boolean,string]
 };
 
-export default function BarChart({ chartData, header }: BarChart2Props) {
+export default function BarChart({ chartData, header, options }: BarChart2Props) {
 
   const truncatedLabels = chartData.labels.map((label) =>
     label.length > 7 ? `${label.slice(0, 7)}..` : label
@@ -38,7 +39,11 @@ export default function BarChart({ chartData, header }: BarChart2Props) {
     ...darkOptions,
     plugins: {
       legend: {
-        display: false, // ซ่อน legend
+        display: options[0], // ซ่อน legend
+        position: options[1],
+        labels:{
+          color: "#ffffff"
+        }
       },
       tooltip: {
         callbacks: {
@@ -65,14 +70,18 @@ export default function BarChart({ chartData, header }: BarChart2Props) {
 
   return (
     <Grid container gap={2} className={scss.wrapper}>
-      <Paper className="block justify-center px-4 py-2 w-full gap-1 bg-[#171d28] border-[2px] border-gray-900 md:flex ">
+      <Paper className="block w-[calc(100%-0.1rem)] justify-center px-4 py-2  gap-1 bg-[#171d28] border-[2px] border-gray-900 md:flex ">
         <div className="max-w-[100%] w-full">
           <Typography>{header}</Typography>
-          <DataChart
-            type={"bar"}
-            data={{ ...chartData, labels: truncatedLabels }}
-            options={chartOptions}
-          />
+          {chartData ? (
+            <DataChart
+              type={"bar"}
+              data={{ ...chartData, labels: truncatedLabels }}
+              options={chartOptions}
+            />
+          ) : (
+            <></>
+          )}
         </div>
       </Paper>
     </Grid>

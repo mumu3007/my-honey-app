@@ -34,7 +34,7 @@
     padding-bottom: 0rem;
     gap: 1rem;
 
-    @media screen and (min-width: 900px) {
+    @media screen and (min-width: 1200px) {
         grid-template-columns: 1fr 1fr 1fr ;
     }
 }
@@ -46,7 +46,17 @@
     padding-bottom: 0rem;
     gap: 1rem;
 
-    @media screen and (min-width: 900px) {
+    @media screen and (min-width: 1025px) {
         grid-template-columns: 1fr 1fr;
+    }
+}
+
+.bottomRow {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr;
+
+    @media screen and (min-width: 1025px) {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
     }
 }

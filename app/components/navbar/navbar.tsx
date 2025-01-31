@@ -119,19 +119,15 @@ export default function Navbar() {
             {isOpen && (
               <ul
                 role="menu"
-                className="absolute right-0 z-10 min-w-[180px] overflow-auto rounded-lg border border-slate-200 bg-white p-1.5 shadow-lg shadow-sm"
+                className="absolute right-0 z-10 min-w-[180px] max-w-[240px] overflow-auto rounded-lg border border-slate-200 bg-white p-1.5 shadow-lg shadow-sm"
               >
                 {status == "authenticated" && session.user ? (
                   <>
                     <li
-                      onClick={() => {
-                        closeMenu();
-                        router.push("/profile");
-                      }}
                       role="menuitem"
-                      className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
+                      className=" text-slate-800 flex w-full text-sm items-center rounded-md p-3 "
                     >
-                      My Profile
+                      {session.user.email}
                     </li>
                     <hr className="my-2 border-slate-200" />
                     <li
