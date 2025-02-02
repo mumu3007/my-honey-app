@@ -8,8 +8,20 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import {
+  Honeypots,
+  Alert,
+  IP_Attacker,
+  Protocol,
+  Username,
+  Password,
+  DestinationPort,
+  HoneypotID
+} from "./mockupData";
+
 
 import axios from "axios";
+import { honeypots } from "../helper/Util";
 
 const darkTheme = createTheme({
   palette: {
@@ -24,6 +36,7 @@ export default function Realtime() {
   const [sortDown, setSortDown] = useState(true);
   const [sortColumn, setSortColumn] = useState<string>("Date"); // คอลัมน์เริ่มต้น
   const [currentPage, setCurrentPage] = useState(1);
+  const [noData, setNoData] = useState(false);
 
   const router = useRouter();
 
@@ -46,6 +59,24 @@ export default function Realtime() {
     { label: "Dest.Port", key: "destinationPort" },
     { label: "Comment", key: "comment" },
   ];
+
+  const generateRandomData = () => {
+
+    const randomData = {
+      name: Honeypots[Math.floor(Math.random() * Honeypots.length)],
+      alert: Alert[Math.floor(Math.random() * Alert.length)],
+      ip_attacker: IP_Attacker[Math.floor(Math.random() * IP_Attacker.length)],
+      protocol: Protocol[Math.floor(Math.random() * Protocol.length)],
+      comment:"",
+      username: Username[Math.floor(Math.random() * Username.length)],
+      password: Password[Math.floor(Math.random() * Password.length)],
+      destinationPort: DestinationPort[Math.floor(Math.random() * DestinationPort.length)],
+      honeypotId: HoneypotID[Math.floor(Math.random() * HoneypotID.length)]
+    };
+
+    console.log(randomData)
+    return randomData
+  };
 
   const sortData = (data: any, column: any, isDescending: any) => {
     return [...data].sort((a, b) => {
@@ -88,24 +119,45 @@ export default function Realtime() {
     try {
       const getAttacks = await axios.get(`/api/attacks/user/${userId}`);
       setAttacks(getAttacks.data);
+      if(getAttacks.data.length == 0){
+        setNoData(true)
+      }
       console.log(getAttacks.data);
     } catch (error) {
-      console.error(error);
+      console.log(error);;
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout | null = null;
+  const createAttacks = async (data: {}) => {
+    try {
+      console.log("QWERTYUIOPLKMNBVSERTYU",data)
+      const getAttacks = await axios.post(`/api/attacks`, data)
+      console.log(getAttacks);
+      return getAttacks
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
+  useEffect(() => {
+    generateRandomData()
+    let intervalIdCreate: NodeJS.Timeout | null = null;
+    let intervalIdFetch: NodeJS.Timeout | null = null;
+    
     const fetchSessionAndData = async () => {
       const sessionData = await getSession();
       if (sessionData) {
         fetchAttacks(sessionData!.user.id);
 
+        // intervalIdCreate = setInterval(async () => {
+        //   createAttacks(generateRandomData()); // ส่งข้อมูล userId
+        // }, 10000); 
+        // // ตั้งเวลา 5 วินาที
+
         // ดึงข้อมูลซ้ำทุก 5 วินาที
-        intervalId = setInterval(() => {
+        intervalIdFetch = setInterval(() => {
           fetchAttacks(sessionData!.user.id);
         }, 5000);
       } else if (status === "unauthenticated") {
@@ -116,8 +168,11 @@ export default function Realtime() {
     fetchSessionAndData();
 
     return () => {
-      if (intervalId) {
-        clearInterval(intervalId); // Cleanup interval เมื่อ component ถูก unmount
+      if (intervalIdFetch) {
+        clearInterval(intervalIdFetch); // Cleanup interval เมื่อ component ถูก unmount
+      }
+      if (intervalIdCreate) {
+        clearInterval(intervalIdCreate); // Cleanup interval เมื่อ component ถูก unmount
       }
     };
   }, [router, status]);
@@ -126,7 +181,13 @@ export default function Realtime() {
     status === "authenticated" &&
     session.user && (
       <ThemeProvider theme={darkTheme}>
-        {loading ? (
+        {noData ? (
+          <div className="flex h-[39rem] items-center justify-center">
+            <div className="text-2xl font-light text-white">
+              "You have not connected to any honeypots yet."
+            </div>
+          </div>
+        ) : loading ? (
           <div className="flex h-[39rem] items-center justify-center">
             <div className="flex flex-col w-[95%] h-[90%] items-center justify-center">
               <div className="text-2xl font-light text-white">

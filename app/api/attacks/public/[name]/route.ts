@@ -6,10 +6,10 @@ export async function GET(
   req: Request,
   { params }: { params: { name: string } }
 ) {
-    const honeypotName = params.name
+    const { name }= await params
     const attacks = await prisma.attacks.findMany({
       where:{
-        name: honeypotName,
+        name: name,
         honeypots: {
           status: "public", // กรองจาก status ของ Honeypots
         },

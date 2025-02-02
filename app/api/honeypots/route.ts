@@ -23,6 +23,14 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const { name, status, userId } = await req.json()
+
+    if (!["cowrie", "dionaea"].includes(name)) {
+      return new Response(JSON.stringify({ error: "Invalid honeypot name. Only 'cowrie' or 'dionaea' are allowed." }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    
     const newHoneypots = await prisma.honeypots.create({
       data: {
         name, 

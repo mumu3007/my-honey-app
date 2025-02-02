@@ -7,7 +7,6 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import BarChart from "../components/chart/barChart/barChart";
 import { Box, Grid, Paper } from "@mui/material";
 import HorizontalBar from "../components/chart/horizontalBar/horizontalBar";
-import LineChart from "../components/chart/lineChart/lineChart";
 import scss from "./public.module.scss";
 import DataCard from "../components/chart/dataCard/dataCard";
 import Doughnut from "../components/chart/doughnut/doughnut";
@@ -91,7 +90,7 @@ export default function Public() {
         console.log(getDionaea.data);
         console.log("fetch Work!!!");
       } catch (error) {
-        console.error(error);
+        console.log(error);
       } finally {
         setLoading(false);
       }
@@ -268,22 +267,6 @@ export default function Public() {
 
               <GeoChart allCountry={allCountry} />
             </Grid>
-
-            {/* <Paper>{honeypots.map((i) => i.user.name)}</Paper> */}
-            {/* <Grid container gap={2} className={scss.topCardsContainer}>
-                    <Grid>
-                        <Paper className={scss.dataCard}>xs=4</Paper>
-                    </Grid>
-                    <Grid>
-                        <Paper className={scss.dataCard}>xs=4</Paper>
-                    </Grid>
-                    <Grid>
-                        <Paper className={scss.dataCard}>xs=4</Paper>
-                    </Grid>
-                </Grid>
-                <Grid xs={12} marginY={2}>
-                    <Paper className={scss.dataCard}>xs=8</Paper>
-                </Grid> */}
           </Box>
         </div>
       )}

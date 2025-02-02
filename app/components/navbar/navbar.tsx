@@ -45,8 +45,6 @@ const stringAvatar = (name: string) => {
 
 export default function Navbar() {
   const {data: session, status} = useSession()
-  // console.log('session', session)
-  // console.log('status', status)
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -62,11 +60,11 @@ export default function Navbar() {
           MyHoney
         </div>
         {status == "authenticated" && session.user && (
-          <div className="flex w-[40%] gap-20 justify-between items-center">
+          <div className="flex w-[40%] justify-between items-center lg:gap-20">
             <div className="flex justify-center w-1/3">
               <button
                 onClick={() => router.push("/realtime")}
-                className="transition hover:scale-110 hover:font-medium duration-200"
+                className="transition hover:scale-110 hover:font-medium duration-200 text-sm lg:text-base"
               >
                 Realtime-Table
               </button>
@@ -74,7 +72,7 @@ export default function Navbar() {
             <div className="flex justify-center w-1/3">
               <button
                 onClick={() => router.push("/public")}
-                className="transition hover:scale-110 hover:font-medium duration-200"
+                className="transition hover:scale-110 hover:font-medium duration-200 text-sm lg:text-base"
               >
                 Public
               </button>
@@ -82,7 +80,7 @@ export default function Navbar() {
             <div className="flex justify-center w-1/3">
               <button
                 onClick={() => router.push("/dashboard")}
-                className="transition hover:scale-110 hover:font-medium duration-200"
+                className="transition hover:scale-110 hover:font-medium duration-200 text-sm lg:text-base"
               >
                 Dashboard
               </button>
@@ -129,6 +127,13 @@ export default function Navbar() {
                     >
                       {session.user.email}
                     </li>
+                    <li
+                      onClick={() =>{closeMenu(); router.push("/connectHoneypot")}}
+                      role="menuitem"
+                      className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
+                    >
+                      Connect to Honeypot
+                    </li>
                     <hr className="my-2 border-slate-200" />
                     <li
                       onClick={() => signOut({ callbackUrl: "/" })}
@@ -141,15 +146,15 @@ export default function Navbar() {
                 ) : (
                   <li
                     onClick={() => {
-                      closeMenu()
-                      router.push("/signinForm")
+                      closeMenu();
+                      router.push("/signinForm");
                     }}
                     role="menuitem"
                     className="cursor-pointer text-slate-800 flex w-full text-sm items-center rounded-md p-3 hover:bg-slate-100"
                   >
                     Sign In
                   </li>
-                  )}
+                )}
               </ul>
             )}
 

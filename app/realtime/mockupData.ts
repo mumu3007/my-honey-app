@@ -1,0 +1,8 @@
+export const Honeypots = ["cowrie", "dionaea"]
+export const Alert = ["red", "yellow"]
+export const IP_Attacker = ["24.48.0.1", "26.48.0.1", "49.48.0.1", "25.48.0.1", "26.0.0.1", "46.17.46.213"]
+export const Protocol = ["ftpd", "Blackhole", "epmapper", "mirrord", "mirrorc", "pptpd"]
+export const Username = ["admin", "root", "test", "guest", "h4ck3r", "darknet_user"]
+export const Password = ["password123", "123456", "qwerty", "letmein", "12345", "admin123"]
+export const DestinationPort = ["8080", "8883", "22", "23", "445","1121"]
+export const HoneypotID = [1,3]

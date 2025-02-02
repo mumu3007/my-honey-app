@@ -12,27 +12,6 @@ export default function SignUp() {
   const [image, setImage] = useState("");
   const router = useRouter();
 
-  // const handleSubmit = async (e: any) => {
-  //   e.preventDefault();
-  //   try {
-  //     console.log("email", email);
-  //     console.log("password", password);
-  //     const result = await signIn("credentials", {
-  //       redirect: false,
-  //       email,
-  //       password,
-  //     });
-
-  //     if (result!.error) {
-  //       console.error(result!.error);
-  //     } else {
-  //       router.push("/dashboard");
-  //     }
-  //   } catch (error) {
-  //     console.log("error", error);
-  //   }
-  // };
-
   const signUp = async (e: any) => {
     e.preventDefault();
     try {
@@ -47,7 +26,7 @@ export default function SignUp() {
       console.log(result);
 
       if(result.data.newUser){
-        router.push("/dashboard")
+        router.push("/signinForm")
       }
     } catch (error) {
       console.log("error", error);

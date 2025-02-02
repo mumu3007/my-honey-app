@@ -21,7 +21,8 @@ export default function SignIn() {
       });
 
       if (result!.error) {
-        console.error(result!.error);
+        alert("Incorrect email or password");
+        console.log(result!.error);
       } else {
         router.push("/dashboard");
       }

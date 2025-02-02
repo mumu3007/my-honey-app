@@ -62,21 +62,21 @@ export const authOptions: AuthOptions = {
   callbacks: {
     jwt: async ({ token, user }) => {
       if (user) {
-        console.log('User data in JWT:', user);
+        // console.log('User data in JWT:', user);
         token.id = Number(user.id)  // Store user id in the token
         token.name = user.name; // เก็บชื่อใหม่ใน token
         token.email = user.email; // เก็บอีเมลใหม่ใน token
         token.picture = user.image;
       }
       else{
-        console.log('NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',);
+      
       }
 
       return token
     },
     session: async ({ session, token }) => {
       if (session.user) {
-         console.log('Token data in session:', token); 
+        //  console.log('Token data in session:', token); 
         session.user.id = Number(token.id) // Include user id in the session
         session.user.name = token.name! || ""; // ใช้ข้อมูลที่อัปเดตใน session
         session.user.email = token.email! || "";
@@ -85,7 +85,7 @@ export const authOptions: AuthOptions = {
       return session
     },
     async redirect({ baseUrl }) {
-      return `${baseUrl}/profile`
+      return `${baseUrl}/dashboard`
     },
   },
 }

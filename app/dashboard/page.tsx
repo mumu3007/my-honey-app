@@ -7,7 +7,6 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import BarChart from "../components/chart/barChart/barChart";
 import { Box, Grid, Paper } from "@mui/material";
 import HorizontalBar from "../components/chart/horizontalBar/horizontalBar";
-import LineChart from "../components/chart/lineChart/lineChart";
 import scss from "./dashboard.module.scss";
 import DataCard from "../components/chart/dataCard/dataCard";
 import Doughnut from "../components/chart/doughnut/doughnut";
@@ -28,10 +27,7 @@ const darkTheme = createTheme({
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
-  // console.log("DATA:", session)
-  // const sessionData = getSession();
-  // console.log("sessionData", sessionData);
-  // console.log("status", status);
+
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
@@ -46,6 +42,7 @@ export default function Dashboard() {
   const [topPass, setTopPass] = useState<Password[]>([]);
   const [honeypots, setHoneypots] = useState<Honeypots[]>([]);
   const [allCountry, setAllCountry] = useState<Country[]>([]);
+  const [noData, setNoData] = useState(false);
 
   useEffect(() => {
     console.log("UseEffect Worked!!!");
@@ -92,6 +89,10 @@ export default function Dashboard() {
           axios.get(`/api/attacks/country/${userId}`),
       ]);
 
+      if(getCowrie.data.length == 0 && getDionaea.data.length == 0){
+        setNoData(true)
+      }
+
       setAttacks(getAttacks.data);
       setCowrie(getCowrie.data);
       setDionaea(getDionaea.data);
@@ -106,7 +107,7 @@ export default function Dashboard() {
       console.log(getCowrie.data);
       console.log("fetch Work!!!");
     } catch (error) {
-      console.error(error);
+      console.log(error);
     } 
     finally {
       setLoading(false);
@@ -134,7 +135,13 @@ export default function Dashboard() {
     status === "authenticated" &&
     session.user && (
       <ThemeProvider theme={darkTheme}>
-        {loading ? (
+        {noData ? (
+          <div className="flex h-[39rem] items-center justify-center">
+            <div className="text-2xl font-light text-white">
+              "You have not connected to any honeypots yet."
+            </div>
+          </div>
+        ) : loading ? (
           <div className="flex h-[39rem] items-center justify-center">
             <div className="flex flex-col w-[95%] h-[90%] items-center justify-center">
               <div className="text-2xl font-light text-white">
