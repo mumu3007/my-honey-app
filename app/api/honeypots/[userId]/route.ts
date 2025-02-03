@@ -6,23 +6,20 @@ const prisma = new PrismaClient()
 
 export async function GET(
   req: Request,
-  { params }: { params: { userId: number } }
+  { params }: { params: {userId: number } }
 ) {
-  
-    const userId = params.userId
+    const { userId }= await params
 
-    const attacks = await prisma.attacks.findMany({
+    const attacks = await prisma.honeypots.findMany({
         where:{
-            honeypots: {
                 userId: Number(userId) // กรองจาก status ของ Honeypots
-            },
         },
         include: {
-            honeypots: true, // ดึงข้อมูล Honeypots ด้วยถ้าต้องการ
+            user: true, // ดึงข้อมูล Honeypots ด้วยถ้าต้องการ
         },
-        orderBy: {
-        id: 'desc', // เรียงตาม id จากน้อยไปมาก
-    },
+         orderBy: {
+            id: 'asc', // เรียงตาม id จากน้อยไปหามาก
+        }
     })
     return Response.json(attacks)
 }

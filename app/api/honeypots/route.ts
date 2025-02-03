@@ -22,7 +22,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const { name, status, userId } = await req.json()
+    const { name, status, ip_honeypot, userId } = await req.json()
 
     if (!["cowrie", "dionaea"].includes(name)) {
       return new Response(JSON.stringify({ error: "Invalid honeypot name. Only 'cowrie' or 'dionaea' are allowed." }), {
@@ -34,7 +34,8 @@ export async function POST(req: Request) {
     const newHoneypots = await prisma.honeypots.create({
       data: {
         name, 
-        status, 
+        status,
+        ip_honeypot, 
         userId 
       },
     })
@@ -76,32 +77,34 @@ export async function PUT(req: Request) {
   }
 }
 
-export async function DELETE(req: Request) {
-  try {
-    const { id } = await req.json()
+// export async function DELETE(req: Request) {
+//   try {
+//     const { id } = await req.json()
 
-    // ตรวจสอบว่า honeypot ที่ต้องการลบมีอยู่หรือไม่
-    const existingHoneypot = await prisma.honeypots.findUnique({
-      where: { id },
-    })
+//     // ตรวจสอบว่า honeypot ที่ต้องการลบมีอยู่หรือไม่
+//     const existingHoneypot = await prisma.honeypots.findUnique({
+//       where: { id },
+//     })
 
-    if (!existingHoneypot) {
-      return new Response(JSON.stringify({ error: 'Honeypot not found' }), {
-        status: 404,
-      })
-    }
+//     if (!existingHoneypot) {
+//       return new Response(JSON.stringify({ error: 'Honeypot not found' }), {
+//         status: 404,
+//       })
+//     }
 
-    // ลบ honeypot
-    await prisma.honeypots.delete({
-      where: { id },
-    })
+//     // ลบ honeypot
+//     await prisma.honeypots.delete({
+//       where: { id },
+//     })
 
-    return new Response(JSON.stringify({ message: 'Honeypot deleted successfully' }), {
-      status: 200,
-    })
-  } catch (error) {
-    return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
-      status: 500,
-    })
-  }
-}
+//     return new Response(JSON.stringify({ message: 'Honeypot deleted successfully' }), {
+//       status: 200,
+//     })
+//   } catch (error) {
+//     return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+//       status: 500,
+//     })
+//   }
+// }
+
+

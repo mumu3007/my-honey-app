@@ -51,7 +51,7 @@ export default function HorizontalBar({ top }: { top: any[] }) {
     labels: top.map((protocol) => protocol.name),
     datasets: [
       {
-        label: "Protocol",
+        label: "Attacks",
         data: top.map((protocol) => protocol._sum ? protocol._sum.count : protocol.count),
         fill: false,
         backgroundColor: getRandomColors(7),

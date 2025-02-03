@@ -43,6 +43,7 @@ export default function Dashboard() {
   const [honeypots, setHoneypots] = useState<Honeypots[]>([]);
   const [allCountry, setAllCountry] = useState<Country[]>([]);
   const [noData, setNoData] = useState(false);
+  const [userId, setUserId] = useState(0)
 
   useEffect(() => {
     console.log("UseEffect Worked!!!");
@@ -52,6 +53,7 @@ export default function Dashboard() {
       if (sessionData) {
         // ถ้า session มีการเข้าใช้งานแล้ว ให้โหลดข้อมูลจาก API
         fetchPosts(sessionData!.user.id);
+        setUserId(sessionData!.user.id);
       } else {
         if (status === "unauthenticated") {
           router.push("/");
@@ -64,6 +66,28 @@ export default function Dashboard() {
 
   const fetchPosts = async (userId: number) => {
     try {
+      const cachedData = localStorage.getItem(`attacks-${userId}`);
+      const cacheExpirationTime = 60 * 10 * 1000;
+      if (cachedData) {
+        const parsedData = JSON.parse(cachedData);
+        const cacheTimestamp = parsedData.timestamp;
+
+        // ตรวจสอบว่าแคชหมดอายุหรือยัง
+        if (Date.now() - cacheTimestamp < cacheExpirationTime) {
+          // แคชยังไม่หมดอายุ ให้ใช้ข้อมูลแคช
+          setAttacks(parsedData.attacks);
+          setCowrie(parsedData.cowrie);
+          setDionaea(parsedData.dionaea);
+          setTop(parsedData.top);
+          setTopUser(parsedData.topUser);
+          setTopUsername(parsedData.topUsername);
+          setTopPort(parsedData.topPort);
+          setTopPass(parsedData.topPass);
+          setTopCountry(parsedData.topCountry);
+          setAllCountry(parsedData.allCountry);
+          return; // กลับออกจากฟังก์ชันโดยไม่โหลดข้อมูลใหม่
+        }
+      }
 
       const [
         getAttacks,
@@ -89,6 +113,8 @@ export default function Dashboard() {
           axios.get(`/api/attacks/country/${userId}`),
       ]);
 
+      console.log(getCowrie.data.length);
+      console.log(getDionaea.data.length);
       if(getCowrie.data.length == 0 && getDionaea.data.length == 0){
         setNoData(true)
       }
@@ -105,6 +131,21 @@ export default function Dashboard() {
       setAllCountry(getAllCountry.data);
 
       console.log(getCowrie.data);
+      const cachedResult = {
+        timestamp: Date.now(),
+        attacks: getAttacks.data,
+        cowrie: getCowrie.data,
+        dionaea: getDionaea.data,
+        top: getTop.data,
+        topUser: getTopUser.data,
+        topUsername: getTopUsername.data,
+        topPort: getTopPort.data,
+        topPass: getTopPass.data,
+        topCountry: getTopCountry.data,
+        allCountry: getAllCountry.data,
+        // Add other necessary data...
+      };
+      localStorage.setItem(`attacks-${userId}`, JSON.stringify(cachedResult));
       console.log("fetch Work!!!");
     } catch (error) {
       console.log(error);
@@ -112,6 +153,13 @@ export default function Dashboard() {
     finally {
       setLoading(false);
     }
+  };
+
+  const handleClearCacheAndRefresh = () => {
+    // ลบข้อมูลจาก cache
+    localStorage.removeItem(`attacks-${userId}`);
+    setLoading(true);
+    fetchPosts(userId);
   };
 
   const getRandomColors = (count: any) => {
@@ -177,6 +225,14 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="px-24 py-8">
+            <div className="flex justify-end">
+              <button
+                onClick={() => handleClearCacheAndRefresh()}
+                className="bg-[#171d28] text-white px-2 py-1 rounded"
+              >
+                refresh
+              </button>
+            </div>
             <Box>
               {/* <div>{country?.country}</div> */}
               <Grid container gap={2} marginTop={0}>

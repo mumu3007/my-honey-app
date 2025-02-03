@@ -8,6 +8,7 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import Skeleton from "@mui/material/Skeleton";
 import {
   Honeypots,
   Alert,
@@ -39,12 +40,6 @@ export default function Realtime() {
   const [noData, setNoData] = useState(false);
 
   const router = useRouter();
-
-  const TABS = [
-    { label: "All", value: "all" },
-    { label: "Cowrie", value: "cowrie" },
-    { label: "Dionaea", value: "dionaea" },
-  ];
 
   const TABLE_HEAD = [
     { label: "No.", key: "index" },
@@ -153,13 +148,13 @@ export default function Realtime() {
 
         // intervalIdCreate = setInterval(async () => {
         //   createAttacks(generateRandomData()); // ส่งข้อมูล userId
-        // }, 10000); 
+        // }, 5000); 
         // // ตั้งเวลา 5 วินาที
 
         // ดึงข้อมูลซ้ำทุก 5 วินาที
         intervalIdFetch = setInterval(() => {
           fetchAttacks(sessionData!.user.id);
-        }, 5000);
+        }, 1000);
       } else if (status === "unauthenticated") {
         router.push("/");
       }
@@ -227,7 +222,7 @@ export default function Realtime() {
               Realtime Table
             </div>
             <div className="flex justify-center">
-              <Card className="h-full w-[95%] overflow-x-scroll  scrollbar scrollbar-thumb-gray-600 scrollbar-track-gray-800 bg-[#171d28]  border-[2px] border-gray-900">
+              <Card className="h-full w-[95%] overflow-x-scroll  scrollbar-thin scrollbar-thumb-white scrollbar-track-gray-800 bg-[#171d28]  border-[2px] border-gray-900">
                 <table className="w-full min-w-max table-auto text-left ">
                   <thead>
                     <tr>
@@ -253,11 +248,15 @@ export default function Realtime() {
                                 className="text-xs text-white px-1"
                               >
                                 {sortColumn === key ? (
-                                  sortDown ? (
+                                  key === "createdAtTime" ? (
+                                    <></>
+                                  ) : sortDown ? (
                                     <KeyboardArrowDownIcon />
                                   ) : (
                                     <KeyboardArrowUpIcon />
                                   )
+                                ) : key === "createdAtTime" ? (
+                                  <></>
                                 ) : (
                                   <KeyboardArrowDownIcon className="opacity-50" />
                                 )}

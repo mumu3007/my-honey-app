@@ -56,6 +56,7 @@ model Honeypots {
   id      Int      @id @default(autoincrement())
   name    String
   status  String
+  ip_honeypot String   @unique
   user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  Int
   attacks     Attacks[]

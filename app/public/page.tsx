@@ -49,7 +49,29 @@ export default function Public() {
 
     const fetchPosts = async () => {
       try {
-        console.time("AAA")
+        const cachedData = localStorage.getItem(`attacks-public`);
+        const cacheExpirationTime = 60 * 10 * 1000;
+        if (cachedData) {
+          const parsedData = JSON.parse(cachedData);
+          const cacheTimestamp = parsedData.timestamp;
+
+          // ตรวจสอบว่าแคชหมดอายุหรือยัง
+          if (Date.now() - cacheTimestamp < cacheExpirationTime) {
+            // แคชยังไม่หมดอายุ ให้ใช้ข้อมูลแคช
+            setAttacks(parsedData.attacks);
+            setCowrie(parsedData.cowrie);
+            setDionaea(parsedData.dionaea);
+            setTop(parsedData.top);
+            setTopUser(parsedData.topUser);
+            setTopUsername(parsedData.topUsername);
+            setTopPort(parsedData.topPort);
+            setTopPass(parsedData.topPass);
+            setTopCountry(parsedData.topCountry);
+            setAllCountry(parsedData.allCountry);
+            return; // กลับออกจากฟังก์ชันโดยไม่โหลดข้อมูลใหม่
+          }
+        }
+
         const [
           getAttacks,
           getCowrie,
@@ -86,6 +108,22 @@ export default function Public() {
         setTopCountry(getTopCountry.data);
         setAllCountry(getAllCountry.data)
 
+        const cachedResult = {
+          timestamp: Date.now(),
+          attacks: getAttacks.data,
+          cowrie: getCowrie.data,
+          dionaea: getDionaea.data,
+          top: getTop.data,
+          topUser: getTopUser.data,
+          topUsername: getTopUsername.data,
+          topPort: getTopPort.data,
+          topPass: getTopPass.data,
+          topCountry: getTopCountry.data,
+          allCountry: getAllCountry.data,
+          // Add other necessary data...
+        };
+        localStorage.setItem(`attacks-public`, JSON.stringify(cachedResult));
+
         console.log(getCowrie.data);
         console.log(getDionaea.data);
         console.log("fetch Work!!!");
@@ -94,6 +132,13 @@ export default function Public() {
       } finally {
         setLoading(false);
       }
+    };
+
+    const handleClearCacheAndRefresh = () => {
+      // ลบข้อมูลจาก cache
+      localStorage.removeItem(`attacks-public`);
+      setLoading(true);
+      fetchPosts();
     };
 
     const getRandomColors = (count: any) => {
@@ -152,6 +197,14 @@ export default function Public() {
         </div>
       ) : (
         <div className="px-24 py-8">
+          <div className="flex justify-end">
+            <button
+              onClick={() => handleClearCacheAndRefresh()}
+              className="bg-[#171d28] text-white px-2 py-1 rounded"
+            >
+              refresh
+            </button>
+          </div>
           <Box>
             {/* <div>{country?.country}</div> */}
             <Grid container gap={2} marginTop={0}>

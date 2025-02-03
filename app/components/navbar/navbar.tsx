@@ -54,7 +54,7 @@ export default function Navbar() {
   
   return (
     <ThemeProvider theme={darkTheme}>
-      <Paper className="flex h-20 justify-between items-center gap-2 px-28 bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+      <Paper className="flex h-20 justify-between items-center gap-2 px-10 lg:px-28 bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
         <div className="flex items-center text-lg font-bold gap-2">
           <img src="/logo.png" alt="" className="w-12 h-12" />
           MyHoney
