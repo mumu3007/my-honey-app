@@ -17,7 +17,6 @@ export type DoughnutProps = {
   cowrie_atk: number;
   dionaea_atk: number;
   country: any[];
-  attacks: any[];
   username: any[];
   port: any[];
 };
@@ -41,7 +40,7 @@ const getRandomColors = (count: any) => {
 
 export default function Doughnut(props: DoughnutProps) {
 
-  const { cowrie_atk, dionaea_atk, country, attacks, username, port } = props;
+  const { cowrie_atk, dionaea_atk, country, username, port } = props;
 
   const doughnutChartData1 = {
     labels: ["Cowrie", "Dioneae"],

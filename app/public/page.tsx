@@ -40,123 +40,149 @@ export default function Public() {
   const [topUsername, setTopUsername] = useState<Username[]>([]);
   const [topPort, setTopPort] = useState<Port[]>([]);
   const [topPass, setTopPass] = useState<Password[]>([]);
+  const [count, setCount] = useState(0);
+  const [countUser, setCountUser] = useState(0);
 
   useEffect(() => {
-      console.log("UseEffect Worked!!!");
-          fetchPosts();
+    console.log("UseEffect Worked!!!");
+    fetchPosts();
+  }, [router]);
 
-    }, [router]);
+  const fetchPosts = async () => {
+    try {
+      const cachedData = localStorage.getItem(`attacks-public`);
+      const cacheExpirationTime = 60 * 10 * 1000;
+      if (cachedData) {
+        const parsedData = JSON.parse(cachedData);
+        const cacheTimestamp = parsedData.timestamp;
 
-    const fetchPosts = async () => {
-      try {
-        const cachedData = localStorage.getItem(`attacks-public`);
-        const cacheExpirationTime = 60 * 10 * 1000;
-        if (cachedData) {
-          const parsedData = JSON.parse(cachedData);
-          const cacheTimestamp = parsedData.timestamp;
+        // ตรวจสอบว่าแคชหมดอายุหรือยัง
+        if (Date.now() - cacheTimestamp < cacheExpirationTime) {
+          console.log(parsedData.attacks);
+          // แคชยังไม่หมดอายุ ให้ใช้ข้อมูลแคช
+          setCowrie(parsedData.cowrie);
+          setDionaea(parsedData.dionaea);
+          setTop(parsedData.top);
+          setTopUser(parsedData.topUser);
+          setTopUsername(parsedData.topUsername);
+          setTopPort(parsedData.topPort);
+          setTopPass(parsedData.topPass);
+          setTopCountry(parsedData.topCountry);
+          setAllCountry(parsedData.allCountry);
+          console.log(parsedData.cowrie);
+          const uniqueHoneypots = new Set([
+            ...parsedData.cowrie.map((attack: any) => attack.honeypotId),
+            ...parsedData.dionaea.map((attack: any) => attack.honeypotId),
+          ]);
+          const uniqueUser = new Set([
+            ...parsedData.cowrie.map((attack: any) => attack.honeypots.userId),
+            ...parsedData.dionaea.map((attack: any) => attack.honeypots.userId),
+          ]);
 
-          // ตรวจสอบว่าแคชหมดอายุหรือยัง
-          if (Date.now() - cacheTimestamp < cacheExpirationTime) {
-            // แคชยังไม่หมดอายุ ให้ใช้ข้อมูลแคช
-            setAttacks(parsedData.attacks);
-            setCowrie(parsedData.cowrie);
-            setDionaea(parsedData.dionaea);
-            setTop(parsedData.top);
-            setTopUser(parsedData.topUser);
-            setTopUsername(parsedData.topUsername);
-            setTopPort(parsedData.topPort);
-            setTopPass(parsedData.topPass);
-            setTopCountry(parsedData.topCountry);
-            setAllCountry(parsedData.allCountry);
-            return; // กลับออกจากฟังก์ชันโดยไม่โหลดข้อมูลใหม่
-          }
+          setCount(uniqueHoneypots.size);
+          setCountUser(uniqueUser.size);
+          console.log(uniqueHoneypots.size);
+          console.log(uniqueUser.size);
+
+          return; // กลับออกจากฟังก์ชันโดยไม่โหลดข้อมูลใหม่
         }
-
-        const [
-          getAttacks,
-          getCowrie,
-          getDionaea,
-          getTop,
-          getTopUser,
-          getTopUsername,
-          getTopPort,
-          getTopPass,
-          getTopCountry,
-          getAllCountry,
-        ] = await Promise.all([
-          axios.get("/api/attacks"),
-          axios.get(`/api/attacks/public/cowrie`),
-          axios.get(`/api/attacks/public/dionaea`),
-          axios.get(`/api/attacks/public/protocols/top`),
-          axios.get(`/api/attacks/public/username/top`),
-          axios.get(`/api/attacks/public/username/top5`),
-          axios.get(`/api/attacks/public/port/top5`),
-          axios.get(`/api/attacks/public/password/top`),
-          axios.get(`/api/attacks/public/country/top`),
-          axios.get("/api/attacks/public/country"),
-        ]);
-        console.timeEnd("AAA");
-
-        setAttacks(getAttacks.data);
-        setCowrie(getCowrie.data);
-        setDionaea(getDionaea.data);
-        setTop(getTop.data);
-        setTopUser(getTopUser.data);
-        setTopUsername(getTopUsername.data);
-        setTopPort(getTopPort.data);
-        setTopPass(getTopPass.data);
-        setTopCountry(getTopCountry.data);
-        setAllCountry(getAllCountry.data)
-
-        const cachedResult = {
-          timestamp: Date.now(),
-          attacks: getAttacks.data,
-          cowrie: getCowrie.data,
-          dionaea: getDionaea.data,
-          top: getTop.data,
-          topUser: getTopUser.data,
-          topUsername: getTopUsername.data,
-          topPort: getTopPort.data,
-          topPass: getTopPass.data,
-          topCountry: getTopCountry.data,
-          allCountry: getAllCountry.data,
-          // Add other necessary data...
-        };
-        localStorage.setItem(`attacks-public`, JSON.stringify(cachedResult));
-
-        console.log(getCowrie.data);
-        console.log(getDionaea.data);
-        console.log("fetch Work!!!");
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
       }
-    };
 
-    const handleClearCacheAndRefresh = () => {
-      // ลบข้อมูลจาก cache
-      localStorage.removeItem(`attacks-public`);
-      setLoading(true);
-      fetchPosts();
-    };
+      const [
+        getCowrie,
+        getDionaea,
+        getTop,
+        getTopUser,
+        getTopUsername,
+        getTopPort,
+        getTopPass,
+        getTopCountry,
+        getAllCountry,
+      ] = await Promise.all([
+        axios.get(`/api/attacks/public/cowrie`),
+        axios.get(`/api/attacks/public/dionaea`),
+        axios.get(`/api/attacks/public/protocols/top`),
+        axios.get(`/api/attacks/public/username/top`),
+        axios.get(`/api/attacks/public/username/top5`),
+        axios.get(`/api/attacks/public/port/top5`),
+        axios.get(`/api/attacks/public/password/top`),
+        axios.get(`/api/attacks/public/country/top`),
+        axios.get("/api/attacks/public/country"),
+      ]);
+      console.timeEnd("AAA");
 
-    const getRandomColors = (count: any) => {
-      const colors = [];
-      const step = Math.floor(360 / count); // ระยะห่างเฉดสีในวงล้อ
-      for (let i = 0; i < count; i++) {
-        const hue = (i * step) % 360; // กระจายเฉดสีในวงล้อ
-        const saturation = 40 + Math.random() * 20; // ความอิ่มตัว (70-90%)
-        const lightness = 50 + Math.random() * 10; // ความสว่าง (80-90%)
-        colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`); // สร้างสีในรูปแบบ HSL
-      }
-      // สุ่มลำดับสีในอาร์เรย์
-      for (let i = colors.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [colors[i], colors[j]] = [colors[j], colors[i]]; // สลับตำแหน่ง
-      }
-      return colors;
-    };
+      setCowrie(getCowrie.data);
+      setDionaea(getDionaea.data);
+      setTop(getTop.data);
+      setTopUser(getTopUser.data);
+      setTopUsername(getTopUsername.data);
+      setTopPort(getTopPort.data);
+      setTopPass(getTopPass.data);
+      setTopCountry(getTopCountry.data);
+      setAllCountry(getAllCountry.data);
+
+      const uniqueHoneypots = new Set([
+        ...getCowrie.data.map((attack: any) => attack.honeypotId),
+        ...getDionaea.data.map((attack: any) => attack.honeypotId),
+      ]);
+          const uniqueUser = new Set([
+            ...getCowrie.data.map((attack: any) => attack.honeypots.userId),
+            ...getDionaea.data.map((attack: any) => attack.honeypots.userId),
+          ]);
+
+          setCount(uniqueHoneypots.size);
+          setCountUser(uniqueUser.size);
+          console.log(uniqueHoneypots.size);
+          console.log(uniqueUser.size);
+
+      const cachedResult = {
+        timestamp: Date.now(),
+        cowrie: getCowrie.data,
+        dionaea: getDionaea.data,
+        top: getTop.data,
+        topUser: getTopUser.data,
+        topUsername: getTopUsername.data,
+        topPort: getTopPort.data,
+        topPass: getTopPass.data,
+        topCountry: getTopCountry.data,
+        allCountry: getAllCountry.data,
+        // Add other necessary data...
+      };
+      localStorage.setItem(`attacks-public`, JSON.stringify(cachedResult));
+
+      console.log(getCowrie.data);
+      console.log(getDionaea.data);
+      console.log("fetch Work!!!");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClearCacheAndRefresh = () => {
+    // ลบข้อมูลจาก cache
+    localStorage.removeItem(`attacks-public`);
+    setLoading(true);
+    fetchPosts();
+  };
+
+  const getRandomColors = (count: any) => {
+    const colors = [];
+    const step = Math.floor(360 / count); // ระยะห่างเฉดสีในวงล้อ
+    for (let i = 0; i < count; i++) {
+      const hue = (i * step) % 360; // กระจายเฉดสีในวงล้อ
+      const saturation = 40 + Math.random() * 20; // ความอิ่มตัว (70-90%)
+      const lightness = 50 + Math.random() * 10; // ความสว่าง (80-90%)
+      colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`); // สร้างสีในรูปแบบ HSL
+    }
+    // สุ่มลำดับสีในอาร์เรย์
+    for (let i = colors.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [colors[i], colors[j]] = [colors[j], colors[i]]; // สลับตำแหน่ง
+    }
+    return colors;
+  };
 
   // When after loading success and have session, show profile
   return (
@@ -197,10 +223,12 @@ export default function Public() {
         </div>
       ) : (
         <div className="px-24 py-8">
-          <div className="flex justify-end">
+          <div className="flex items-center justify-end text-white">
+            <div>From: {countUser} user</div>
+            <div>, {count} honeypots</div>
             <button
               onClick={() => handleClearCacheAndRefresh()}
-              className="bg-[#171d28] text-white px-2 py-1 rounded"
+              className="bg-[#171d28] text-white px-2 py-1 rounded ml-4"
             >
               refresh
             </button>
@@ -275,7 +303,6 @@ export default function Public() {
                   cowrie_atk={cowrie.length}
                   dionaea_atk={dionaea.length}
                   country={topCountry}
-                  attacks={attacks}
                   port={topPort}
                   username={topUsername}
                 />

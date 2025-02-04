@@ -75,7 +75,6 @@ export default function Dashboard() {
         // ตรวจสอบว่าแคชหมดอายุหรือยัง
         if (Date.now() - cacheTimestamp < cacheExpirationTime) {
           // แคชยังไม่หมดอายุ ให้ใช้ข้อมูลแคช
-          setAttacks(parsedData.attacks);
           setCowrie(parsedData.cowrie);
           setDionaea(parsedData.dionaea);
           setTop(parsedData.top);
@@ -85,12 +84,13 @@ export default function Dashboard() {
           setTopPass(parsedData.topPass);
           setTopCountry(parsedData.topCountry);
           setAllCountry(parsedData.allCountry);
+
+          
           return; // กลับออกจากฟังก์ชันโดยไม่โหลดข้อมูลใหม่
         }
       }
 
       const [
-        getAttacks,
         getCowrie,
         getDionaea,
         getTop,
@@ -101,7 +101,6 @@ export default function Dashboard() {
         getTopCountry,
         getAllCountry,
       ] = await Promise.all([
-          axios.get("/api/attacks"),
           axios.get(`/api/attacks/cowrie/${userId}`),
           axios.get(`/api/attacks/dionaea/${userId}`),
           axios.get(`/api/attacks/protocols/top/${userId}`),
@@ -119,7 +118,6 @@ export default function Dashboard() {
         setNoData(true)
       }
 
-      setAttacks(getAttacks.data);
       setCowrie(getCowrie.data);
       setDionaea(getDionaea.data);
       setTop(getTop.data);
@@ -133,7 +131,6 @@ export default function Dashboard() {
       console.log(getCowrie.data);
       const cachedResult = {
         timestamp: Date.now(),
-        attacks: getAttacks.data,
         cowrie: getCowrie.data,
         dionaea: getDionaea.data,
         top: getTop.data,
@@ -304,7 +301,6 @@ export default function Dashboard() {
                       cowrie_atk={cowrie.length}
                       dionaea_atk={dionaea.length}
                       country={topCountry}
-                      attacks={attacks}
                       port={topPort}
                       username={topUsername}
                     />
